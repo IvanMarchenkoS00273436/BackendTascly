@@ -1,0 +1,6 @@
+@BackendTascly_HostAddress = http://localhost:5226
+
+GET {{BackendTascly_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
