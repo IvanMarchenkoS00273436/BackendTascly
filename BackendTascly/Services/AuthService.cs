@@ -1,6 +1,6 @@
 ﻿using BackendTascly.Data;
 using BackendTascly.Entities.ModelsDto;
-using BackendTascly.Models;
+using BackendTascly.Entities;
 using BackendTascly.Repositories;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.Tokens;

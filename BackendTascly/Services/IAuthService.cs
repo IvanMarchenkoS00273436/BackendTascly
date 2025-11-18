@@ -1,5 +1,5 @@
 ﻿using BackendTascly.Entities.ModelsDto;
-using BackendTascly.Models;
+using BackendTascly.Entities;
 
 namespace BackendTascly.Services
 {

@@ -1,4 +1,4 @@
-﻿using BackendTascly.Models;
+﻿using BackendTascly.Entities;
 
 namespace BackendTascly.Repositories
 {

@@ -1,5 +1,5 @@
 ﻿using BackendTascly.Data;
-using BackendTascly.Models;
+using BackendTascly.Entities;
 using Microsoft.EntityFrameworkCore;
 
 namespace BackendTascly.Repositories
