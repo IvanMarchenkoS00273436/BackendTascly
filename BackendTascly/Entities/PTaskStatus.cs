@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace BackendTascly.Entities
 {
-    public class TaskImportance
+    public class PTaskStatus
     {
         [Key]
         public Int16 Id { get; set; }
@@ -16,6 +16,5 @@ namespace BackendTascly.Entities
         public Guid ProjectId { get; set; }
         [ForeignKey("ProjectId")]
         public virtual Project Project { get; set; }
-
     }
 }
