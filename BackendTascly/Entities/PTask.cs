@@ -17,14 +17,17 @@ namespace BackendTascly.Entities
 
         [Required]
         public Int16 StatusId { get; set; }
-        public virtual TaskStatus Status { get; set; }
+        [ForeignKey("StatusId")]
+        public virtual PTaskStatus Status { get; set; }
 
         [Required]
         public Int16 ImportanceId { get; set; }
+        [ForeignKey("ImportanceId")]
         public virtual TaskImportance Importance { get; set; }
 
         [Required]
         public Guid ProjectId { get; set; }
+        [ForeignKey("ProjectId")]
         public virtual Project Project { get; set; }
 
         [Required]
@@ -34,6 +37,7 @@ namespace BackendTascly.Entities
         
         [Required]
         public Guid AuthorId { get; set; }
+        [ForeignKey("AuthorId")]
         public virtual User Author { get; set; }
         public virtual ICollection<User> AssignedTo { get; set; } = new List<User>();
 

@@ -1,8 +1,9 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace BackendTascly.Entities
 {
-    public class TaskStatus
+    public class PTaskStatus
     {
         [Key]
         public Int16 Id { get; set; }
@@ -13,6 +14,7 @@ namespace BackendTascly.Entities
 
         [Required]
         public Guid ProjectId { get; set; }
+        [ForeignKey("ProjectId")]
         public virtual Project Project { get; set; }
     }
 }
