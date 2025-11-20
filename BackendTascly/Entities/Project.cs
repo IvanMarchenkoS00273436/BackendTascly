@@ -23,5 +23,6 @@ namespace BackendTascly.Entities
         public virtual ICollection<PTaskStatus> TaskStatuses { get; set; } = new List<PTaskStatus>();
         public virtual ICollection<TaskImportance> TaskImportances { get; set; } = new List<TaskImportance>();
         public virtual ICollection<PTask> Tasks { get; set; } = new List<PTask>();
+        public virtual ICollection<Role> Roles { get; set; } = new List<Role>();
     }
 }
