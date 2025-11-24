@@ -33,6 +33,7 @@ namespace BackendTascly.Controllers
         public async Task<ActionResult> CreateProjectAsync(PostProject postProject)
         {
             var projectEntity = mapper.Map<Project>(postProject);
+            projectEntity.OwnerId = Guid.Parse("22222222-2222-2222-2222-222222222222"); // For now needs to be replaced with actual user id from auth
             var result = await projectService.CreateProjectAsync(projectEntity);
             if (!result) return BadRequest("Failed to create project.");
             return Ok("Project created successfully.");
