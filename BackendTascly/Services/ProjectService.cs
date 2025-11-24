@@ -3,7 +3,7 @@ using BackendTascly.Repositories;
 
 namespace BackendTascly.Services
 {
-    public class ProjectService(ProjectsRepository projectsRepository) : IProjectService
+    public class ProjectService(IProjectsRepository projectsRepository) : IProjectService
     {
         public Task<bool> CreateProjectAsync(Project project)
         {
