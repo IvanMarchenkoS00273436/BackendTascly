@@ -25,6 +25,7 @@ namespace BackendTascly.Repositories
                 .Include(p => p.TaskImportances)
                 .Include(p => p.Tasks)
                 .Include(p => p.Roles)
+                .Include(p => p.Owner)
                 .Where(p => p.OwnerId == ownerId).ToListAsync();
             return projects;
         }
@@ -37,6 +38,7 @@ namespace BackendTascly.Repositories
                 .Include(p => p.TaskImportances)
                 .Include(p => p.Tasks)
                 .Include(p => p.Roles)
+                .Include(p => p.Owner)
                 .FirstOrDefaultAsync(p => p.Id == projectId);
 
             return project;
