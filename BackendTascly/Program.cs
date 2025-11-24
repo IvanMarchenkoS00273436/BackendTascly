@@ -18,6 +18,7 @@ builder.Services.AddDbContext<TasclyDbContext>(options => options.UseSqlServer(b
 
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IUsersRepository, UsersRepository>();
+builder.Services.AddScoped<IProjectsRepository, ProjectsRepository>();
 
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(options =>
 {
