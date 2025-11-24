@@ -6,15 +6,23 @@ namespace BackendTascly.Repositories
 {
     public class ProjectsRepository(TasclyDbContext context) : IProjectsRepository
     {
-        public async Task AddProjectAsync(Project project)
+        public async Task<bool> AddProjectAsync(Project project)
         {
-            await context.Projects.AddAsync(project);
+            if (project is null) return false;
+
+            context.Projects.Add(project);
+
+            var affected = await context.SaveChangesAsync();
+            return affected > 0; // >0 means at least one entity row was written.
         }
 
-        public async Task DeleteProjectAsync(Guid projectId)
+        public async Task<bool> DeleteProjectAsync(Guid projectId)
         {
             var project = await context.Projects.FindAsync(projectId);
             context.Projects.Remove(project);
+
+            var affected = await context.SaveChangesAsync();
+            return affected > 0;
         }
 
         public async Task<List<Project>> GetAllProjectsByOwnerId(Guid ownerId)
