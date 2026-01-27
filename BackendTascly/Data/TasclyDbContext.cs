@@ -8,7 +8,7 @@ namespace BackendTascly.Data
         public DbSet<User> Users { get; set; }
         public DbSet<Project> Projects { get; set; }
         public DbSet<Role> Roles { get; set; }
-        public DbSet<RoleUserProject> RoleUserProjects { get; set; }
+        public DbSet<WorkspaceUserRole> RoleUserProjects { get; set; }
         public DbSet<PTask> Tasks { get; set; }
         public DbSet<PTaskStatus> TaskStatuses { get; set; }
         public DbSet<TaskImportance> TaskImportances { get; set; }
@@ -18,6 +18,7 @@ namespace BackendTascly.Data
             base.OnModelCreating(modelBuilder);
         }
 
+        /*
         public async Task SeedDataAsync(CancellationToken cancellationToken = default)
         {
             // If any users exist we assume seeding done (you can refine per table later)
@@ -69,10 +70,10 @@ namespace BackendTascly.Data
             // RoleUserProjects
             await RoleUserProjects.AddRangeAsync(new[]
             {
-                new RoleUserProject { Id = Guid.Parse("cccccccc-cccc-cccc-cccc-cccccccccccc"), RoleId = roleId1, UserId = userId1, ProjectId = projectId1 },
-                new RoleUserProject { Id = Guid.Parse("dddddddd-1111-2222-3333-444444444444"), RoleId = roleId2, UserId = userId3, ProjectId = projectId1 },
-                new RoleUserProject { Id = Guid.Parse("eeeeeeee-1111-2222-3333-444444444444"), RoleId = roleId3, UserId = userId2, ProjectId = projectId2 },
-                new RoleUserProject { Id = Guid.Parse("ffffffff-1111-2222-3333-444444444444"), RoleId = roleId4, UserId = userId3, ProjectId = projectId2 }
+                new WorkspaceUserRole { Id = Guid.Parse("cccccccc-cccc-cccc-cccc-cccccccccccc"), RoleId = roleId1, UserId = userId1, ProjectId = projectId1 },
+                new WorkspaceUserRole { Id = Guid.Parse("dddddddd-1111-2222-3333-444444444444"), RoleId = roleId2, UserId = userId3, ProjectId = projectId1 },
+                new WorkspaceUserRole { Id = Guid.Parse("eeeeeeee-1111-2222-3333-444444444444"), RoleId = roleId3, UserId = userId2, ProjectId = projectId2 },
+                new WorkspaceUserRole { Id = Guid.Parse("ffffffff-1111-2222-3333-444444444444"), RoleId = roleId4, UserId = userId3, ProjectId = projectId2 }
             }, cancellationToken);
             await SaveChangesAsync(cancellationToken);
 
@@ -182,5 +183,6 @@ namespace BackendTascly.Data
             }, cancellationToken);
             await SaveChangesAsync(cancellationToken);
         }
+        */
     }
 }

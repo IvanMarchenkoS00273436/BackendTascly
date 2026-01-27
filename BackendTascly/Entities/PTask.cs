@@ -15,6 +15,16 @@ namespace BackendTascly.Entities
         [StringLength(1000)]
         public string Description { get; set; }
 
+        public DateTime StartDate { get; set; }
+        public DateTime DueDate { get; set; }
+
+        [Required]
+        public DateTime CreationDate { get; set; }
+        public DateTime? CompletionDate { get; set; }
+        [Required]
+        public DateTime LastModifiedDate { get; set; }
+
+        //relationships
         [Required]
         public Int16 StatusId { get; set; }
         [ForeignKey("StatusId")]
@@ -31,20 +41,14 @@ namespace BackendTascly.Entities
         public virtual Project Project { get; set; }
 
         [Required]
-        public DateTime StartDate { get; set; }
-        [Required]
-        public DateTime DueDate { get; set; }
-        
-        [Required]
         public Guid AuthorId { get; set; }
         [ForeignKey("AuthorId")]
         public virtual User Author { get; set; }
-        public virtual ICollection<User> AssignedTo { get; set; } = new List<User>();
 
-        [Required]
-        public DateTime CreationDate { get; set; }
-        public DateTime? CompletionDate { get; set; }
-        [Required]
-        public DateTime LastModifiedDate { get; set; }
+        public Guid AssigneeId { get; set; }
+        [ForeignKey("AssigneeId")]
+        public virtual User AssignedTo { get; set; }
+
+
     }
 }
