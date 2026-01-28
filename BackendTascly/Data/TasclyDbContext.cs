@@ -5,10 +5,14 @@ namespace BackendTascly.Data
 {
     public class TasclyDbContext(DbContextOptions<TasclyDbContext> options) : DbContext(options)
     {
+
+
+        public DbSet<Organization> Organizations { get; set; }
+        public DbSet<Workspace> Workspaces { get; set; }
         public DbSet<User> Users { get; set; }
-        public DbSet<Project> Projects { get; set; }
         public DbSet<Role> Roles { get; set; }
-        public DbSet<WorkspaceUserRole> RoleUserProjects { get; set; }
+        public DbSet<WorkspaceUserRole> WorkspaceUserRoles { get; set; }
+        public DbSet<Project> Projects { get; set; }
         public DbSet<PTask> Tasks { get; set; }
         public DbSet<PTaskStatus> TaskStatuses { get; set; }
         public DbSet<TaskImportance> TaskImportances { get; set; }

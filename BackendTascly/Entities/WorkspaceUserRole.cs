@@ -1,15 +1,17 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Microsoft.EntityFrameworkCore;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Diagnostics.CodeAnalysis;
 
 namespace BackendTascly.Entities
 {
+    [PrimaryKey(nameof(WorkspaceId), nameof(UserId))]
     public class WorkspaceUserRole
     {
-        [Key, Column(Order = 0)]
+        [Column(Order = 0)]
         public Guid WorkspaceId { get; set; }
 
-        [Key, Column(Order = 1)]
+        [Column(Order = 1)]
         public Guid UserId { get; set; }
         
         [Required]
