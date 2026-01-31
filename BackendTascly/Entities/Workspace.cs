@@ -17,10 +17,10 @@ namespace BackendTascly.Entities
         [ForeignKey("OrganizationId")]
         public virtual Organization Organization { get; set; }
 
-        [Required]
-        public Guid OwnerId { get; set; }
-        [ForeignKey("OwnerId")]
-        public virtual User Owner { get; set; }
+        //[Required]
+        //public Guid OwnerId { get; set; }
+        //[ForeignKey("OwnerId")]
+        //public virtual User Owner { get; set; }
 
         public virtual ICollection<WorkspaceUserRole> WorkspaceUserRoles { get; } = new List<WorkspaceUserRole>();
         public virtual ICollection<User> Members { get; set; } = new List<User>();

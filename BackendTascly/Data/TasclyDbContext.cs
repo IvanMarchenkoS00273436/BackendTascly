@@ -1,5 +1,6 @@
 ﻿using BackendTascly.Entities;
 using Microsoft.EntityFrameworkCore;
+using System.Drawing;
 
 namespace BackendTascly.Data
 {
@@ -19,7 +20,13 @@ namespace BackendTascly.Data
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            base.OnModelCreating(modelBuilder);
+
+            //modelBuilder.Entity<Workspace>()
+            //    .HasOne(u => u.Owner);
+
+            modelBuilder.Entity<User>()
+                .HasOne(u => u.Organization)
+                .WithMany().OnDelete(DeleteBehavior.NoAction);
         }
 
         /*

@@ -22,10 +22,29 @@ namespace BackendTascly.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
+            modelBuilder.Entity("BackendTascly.Entities.Organization", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Organizations");
+                });
+
             modelBuilder.Entity("BackendTascly.Entities.PTask", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("AssigneeId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<Guid>("AuthorId")
@@ -66,6 +85,8 @@ namespace BackendTascly.Migrations
                         .HasColumnType("smallint");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("AssigneeId");
 
                     b.HasIndex("AuthorId");
 
@@ -120,9 +141,14 @@ namespace BackendTascly.Migrations
                     b.Property<Guid>("OwnerId")
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<Guid>("WorkspaceId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.HasKey("Id");
 
                     b.HasIndex("OwnerId");
+
+                    b.HasIndex("WorkspaceId");
 
                     b.ToTable("Projects");
                 });
@@ -138,40 +164,9 @@ namespace BackendTascly.Migrations
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
 
-                    b.Property<Guid>("ProjectId")
-                        .HasColumnType("uniqueidentifier");
-
                     b.HasKey("Id");
-
-                    b.HasIndex("ProjectId");
 
                     b.ToTable("Roles");
-                });
-
-            modelBuilder.Entity("BackendTascly.Entities.RoleUserProject", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid>("ProjectId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid>("RoleId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid>("UserId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ProjectId");
-
-                    b.HasIndex("RoleId");
-
-                    b.HasIndex("UserId");
-
-                    b.ToTable("RoleUserProjects");
                 });
 
             modelBuilder.Entity("BackendTascly.Entities.TaskImportance", b =>
@@ -208,20 +203,23 @@ namespace BackendTascly.Migrations
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
 
+                    b.Property<bool>("IsSuperAdmin")
+                        .HasColumnType("bit");
+
                     b.Property<string>("LastName")
                         .IsRequired()
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
 
-                    b.Property<Guid?>("PTaskId")
+                    b.Property<Guid>("OrganizationId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("OrganizationId1")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("PasswordHash")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<Guid?>("ProjectId")
-                        .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("RefreshToken")
                         .HasColumnType("nvarchar(max)");
@@ -235,15 +233,79 @@ namespace BackendTascly.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("PTaskId");
+                    b.HasIndex("OrganizationId");
 
-                    b.HasIndex("ProjectId");
+                    b.HasIndex("OrganizationId1");
 
                     b.ToTable("Users");
                 });
 
+            modelBuilder.Entity("BackendTascly.Entities.Workspace", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<Guid>("OrganizationId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("OrganizationId");
+
+                    b.ToTable("Workspaces");
+                });
+
+            modelBuilder.Entity("BackendTascly.Entities.WorkspaceUserRole", b =>
+                {
+                    b.Property<Guid>("WorkspaceId")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnOrder(0);
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnOrder(1);
+
+                    b.Property<Guid>("RoleId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("WorkspaceId", "UserId");
+
+                    b.HasIndex("RoleId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("WorkspaceUserRoles");
+                });
+
+            modelBuilder.Entity("UserWorkspace", b =>
+                {
+                    b.Property<Guid>("MembersId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("WorkspacesId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("MembersId", "WorkspacesId");
+
+                    b.HasIndex("WorkspacesId");
+
+                    b.ToTable("UserWorkspace");
+                });
+
             modelBuilder.Entity("BackendTascly.Entities.PTask", b =>
                 {
+                    b.HasOne("BackendTascly.Entities.User", "AssignedTo")
+                        .WithMany()
+                        .HasForeignKey("AssigneeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("BackendTascly.Entities.User", "Author")
                         .WithMany()
                         .HasForeignKey("AuthorId")
@@ -267,6 +329,8 @@ namespace BackendTascly.Migrations
                         .HasForeignKey("StatusId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("AssignedTo");
 
                     b.Navigation("Author");
 
@@ -296,45 +360,15 @@ namespace BackendTascly.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("BackendTascly.Entities.Workspace", "Workspace")
+                        .WithMany("Projects")
+                        .HasForeignKey("WorkspaceId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.Navigation("Owner");
-                });
 
-            modelBuilder.Entity("BackendTascly.Entities.Role", b =>
-                {
-                    b.HasOne("BackendTascly.Entities.Project", "Project")
-                        .WithMany("Roles")
-                        .HasForeignKey("ProjectId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Project");
-                });
-
-            modelBuilder.Entity("BackendTascly.Entities.RoleUserProject", b =>
-                {
-                    b.HasOne("BackendTascly.Entities.Project", "Project")
-                        .WithMany()
-                        .HasForeignKey("ProjectId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("BackendTascly.Entities.Role", "Role")
-                        .WithMany()
-                        .HasForeignKey("RoleId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("BackendTascly.Entities.User", "User")
-                        .WithMany()
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Project");
-
-                    b.Navigation("Role");
-
-                    b.Navigation("User");
+                    b.Navigation("Workspace");
                 });
 
             modelBuilder.Entity("BackendTascly.Entities.TaskImportance", b =>
@@ -350,31 +384,98 @@ namespace BackendTascly.Migrations
 
             modelBuilder.Entity("BackendTascly.Entities.User", b =>
                 {
-                    b.HasOne("BackendTascly.Entities.PTask", null)
-                        .WithMany("AssignedTo")
-                        .HasForeignKey("PTaskId");
+                    b.HasOne("BackendTascly.Entities.Organization", "Organization")
+                        .WithMany()
+                        .HasForeignKey("OrganizationId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
 
-                    b.HasOne("BackendTascly.Entities.Project", null)
+                    b.HasOne("BackendTascly.Entities.Organization", null)
                         .WithMany("Members")
-                        .HasForeignKey("ProjectId");
+                        .HasForeignKey("OrganizationId1");
+
+                    b.Navigation("Organization");
                 });
 
-            modelBuilder.Entity("BackendTascly.Entities.PTask", b =>
+            modelBuilder.Entity("BackendTascly.Entities.Workspace", b =>
                 {
-                    b.Navigation("AssignedTo");
+                    b.HasOne("BackendTascly.Entities.Organization", "Organization")
+                        .WithMany("Workspaces")
+                        .HasForeignKey("OrganizationId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Organization");
+                });
+
+            modelBuilder.Entity("BackendTascly.Entities.WorkspaceUserRole", b =>
+                {
+                    b.HasOne("BackendTascly.Entities.Role", "Role")
+                        .WithMany()
+                        .HasForeignKey("RoleId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("BackendTascly.Entities.User", "User")
+                        .WithMany("WorkspaceUserRoles")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("BackendTascly.Entities.Workspace", "Workspace")
+                        .WithMany("WorkspaceUserRoles")
+                        .HasForeignKey("WorkspaceId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Role");
+
+                    b.Navigation("User");
+
+                    b.Navigation("Workspace");
+                });
+
+            modelBuilder.Entity("UserWorkspace", b =>
+                {
+                    b.HasOne("BackendTascly.Entities.User", null)
+                        .WithMany()
+                        .HasForeignKey("MembersId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("BackendTascly.Entities.Workspace", null)
+                        .WithMany()
+                        .HasForeignKey("WorkspacesId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("BackendTascly.Entities.Organization", b =>
+                {
+                    b.Navigation("Members");
+
+                    b.Navigation("Workspaces");
                 });
 
             modelBuilder.Entity("BackendTascly.Entities.Project", b =>
                 {
-                    b.Navigation("Members");
-
-                    b.Navigation("Roles");
-
                     b.Navigation("TaskImportances");
 
                     b.Navigation("TaskStatuses");
 
                     b.Navigation("Tasks");
+                });
+
+            modelBuilder.Entity("BackendTascly.Entities.User", b =>
+                {
+                    b.Navigation("WorkspaceUserRoles");
+                });
+
+            modelBuilder.Entity("BackendTascly.Entities.Workspace", b =>
+                {
+                    b.Navigation("Projects");
+
+                    b.Navigation("WorkspaceUserRoles");
                 });
 #pragma warning restore 612, 618
         }
