@@ -45,7 +45,7 @@ namespace BackendTascly.Entities
         [ForeignKey("AuthorId")]
         public virtual User Author { get; set; }
 
-        public Guid AssigneeId { get; set; }
+        public Guid? AssigneeId { get; set; }
         [ForeignKey("AssigneeId")]
         public virtual User AssignedTo { get; set; }
 
