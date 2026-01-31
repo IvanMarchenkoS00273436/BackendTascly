@@ -44,7 +44,7 @@ using (var scope = app.Services.CreateScope())
 {
     var context = scope.ServiceProvider.GetRequiredService<TasclyDbContext>();
     await context.Database.MigrateAsync();
-    //await context.SeedDataAsync();
+    await context.SeedDataAsync();
 }
 
 // Configure the HTTP request pipeline.
