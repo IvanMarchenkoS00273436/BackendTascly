@@ -26,7 +26,8 @@ namespace BackendTascly.Data
 
             modelBuilder.Entity<User>()
                 .HasOne(u => u.Organization)
-                .WithMany().OnDelete(DeleteBehavior.NoAction);
+                .WithMany(u => u.Members)
+                .OnDelete(DeleteBehavior.NoAction);
         }
 
         /*
