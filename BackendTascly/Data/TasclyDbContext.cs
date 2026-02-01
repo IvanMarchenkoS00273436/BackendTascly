@@ -28,6 +28,22 @@ namespace BackendTascly.Data
                 .HasOne(u => u.Organization)
                 .WithMany(u => u.Members)
                 .OnDelete(DeleteBehavior.NoAction);
+
+            // NEW: Configure Many-to-Many via WorkspaceUserRole
+            modelBuilder.Entity<User>()
+                .HasMany(u => u.Workspaces)
+                .WithMany(w => w.Members)
+                .UsingEntity<WorkspaceUserRole>(
+                    l => l.HasOne(ur => ur.Workspace)
+                        .WithMany(w => w.WorkspaceUserRoles)
+                        .HasForeignKey(ur => ur.WorkspaceId),
+                    r => r.HasOne(ur => ur.User)
+                        .WithMany(u => u.WorkspaceUserRoles)
+                        .HasForeignKey(ur => ur.UserId),
+                    j =>
+                    {
+                        j.HasKey(t => new { t.WorkspaceId, t.UserId });
+                    });
         }
 
         

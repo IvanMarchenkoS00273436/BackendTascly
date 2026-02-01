@@ -23,7 +23,7 @@ namespace BackendTascly.Entities
         //public virtual User Owner { get; set; }
 
         public virtual ICollection<WorkspaceUserRole> WorkspaceUserRoles { get; } = new List<WorkspaceUserRole>();
-        //public virtual ICollection<User> Members { get; set; } = new List<User>();
+        public virtual ICollection<User> Members { get; set; } = new List<User>();
         public virtual ICollection<Project> Projects { get; set; } = new List<Project>();
     }
 }

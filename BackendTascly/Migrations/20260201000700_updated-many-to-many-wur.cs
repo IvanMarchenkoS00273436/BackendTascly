@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace BackendTascly.Migrations
 {
     /// <inheritdoc />
-    public partial class fixupdateentitiesremoveWorkspaceUsers : Migration
+    public partial class updatedmanytomanywur : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)

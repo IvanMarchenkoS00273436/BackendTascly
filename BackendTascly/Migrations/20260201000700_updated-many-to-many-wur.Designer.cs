@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace BackendTascly.Migrations
 {
     [DbContext(typeof(TasclyDbContext))]
-    [Migration("20260131235615_fix-update-entities-removeWorkspaceUsers")]
-    partial class fixupdateentitiesremoveWorkspaceUsers
+    [Migration("20260201000700_updated-many-to-many-wur")]
+    partial class updatedmanytomanywur
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

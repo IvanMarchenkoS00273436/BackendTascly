@@ -33,6 +33,6 @@ namespace BackendTascly.Entities
         public virtual Organization Organization { get; set; }
 
         public virtual ICollection<WorkspaceUserRole> WorkspaceUserRoles { get; } = new List<WorkspaceUserRole>();
-        //public virtual ICollection<Workspace> Workspaces { get; set; } = new List<Workspace>();
+        public virtual ICollection<Workspace> Workspaces { get; set; } = new List<Workspace>();
     }
 }
