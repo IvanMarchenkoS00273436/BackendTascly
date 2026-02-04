@@ -20,10 +20,10 @@ namespace BackendTascly.Controllers
     public class AuthController(IAuthService authService) : ControllerBase
     {
         [HttpPost("register")]
-        public async Task<ActionResult<bool>> Register(UserDto request)
+        public async Task<ActionResult<bool>> Register(PostUserDto request)
         {
-            var user = await authService.RegisterAsync(request);
-            if (user is null) return BadRequest("User already exists.");
+            var userResult = await authService.RegisterAsync(request);
+            if(userResult.Item1 == false) return BadRequest(userResult.Item2);
 
             return Ok(true);
         }
