@@ -1,5 +1,4 @@
 ﻿using BackendTascly.Data;
-using BackendTascly.Entities.ModelsDto;
 using BackendTascly.Entities;
 using BackendTascly.Repositories;
 using Microsoft.AspNetCore.Identity;
@@ -8,6 +7,8 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
+using BackendTascly.Data.ModelsDto;
+using BackendTascly.Data.ModelsDto.UsersDtos;
 
 namespace BackendTascly.Services
 {

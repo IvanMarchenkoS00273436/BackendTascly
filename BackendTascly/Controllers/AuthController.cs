@@ -1,5 +1,4 @@
-﻿using BackendTascly.Entities.ModelsDto;
-using BackendTascly.Entities;
+﻿using BackendTascly.Entities;
 using BackendTascly.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -11,6 +10,8 @@ using System.Net;
 using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
+using BackendTascly.Data.ModelsDto;
+using BackendTascly.Data.ModelsDto.UsersDtos;
 
 namespace BackendTascly.Controllers
 {

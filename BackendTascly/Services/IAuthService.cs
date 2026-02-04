@@ -1,5 +1,6 @@
-﻿using BackendTascly.Entities.ModelsDto;
-using BackendTascly.Entities;
+﻿using BackendTascly.Entities;
+using BackendTascly.Data.ModelsDto;
+using BackendTascly.Data.ModelsDto.UsersDtos;
 
 namespace BackendTascly.Services
 {

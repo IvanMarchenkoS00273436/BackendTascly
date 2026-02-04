@@ -3,7 +3,7 @@ using BackendTascly.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using BackendTascly.Entities;
-using BackendTascly.Entities.ModelsDto.ProjectsDtos;
+using BackendTascly.Data.ModelsDto.ProjectsDtos;
 
 namespace BackendTascly.Controllers
 {

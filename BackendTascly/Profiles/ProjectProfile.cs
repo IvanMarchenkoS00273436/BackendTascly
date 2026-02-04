@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
+using BackendTascly.Data.ModelsDto.ProjectsDtos;
 using BackendTascly.Entities;
-using BackendTascly.Entities.ModelsDto.ProjectsDtos;
 
 namespace BackendTascly.Profiles
 {
