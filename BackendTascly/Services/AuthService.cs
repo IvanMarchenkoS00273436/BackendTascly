@@ -75,8 +75,12 @@ namespace BackendTascly.Services
         {
             var claims = new List<Claim>
             {
-                new Claim(ClaimTypes.Name, user.Username),
-                new Claim(ClaimTypes.NameIdentifier, user.Id.ToString())
+                new Claim("UserId", user.Id.ToString()),
+                new Claim("Username", user.Username),
+                new Claim("IsSuperAdmin", user.IsSuperAdmin.ToString()),
+                new Claim("OrganizationId", user.OrganizationId.ToString()),
+                new Claim("FirstName", user.FirstName),
+                new Claim("LastName", user.LastName),
             };
 
             var key = new SymmetricSecurityKey(
