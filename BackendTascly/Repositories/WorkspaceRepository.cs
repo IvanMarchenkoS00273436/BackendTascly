@@ -24,5 +24,9 @@ namespace BackendTascly.Repositories
                                 .ToListAsync();
             return workspaces;
         }
+        public async Task<Workspace?> GetWorkspaceByIdAsync(Guid workspaceId)
+        {
+            return await context.Workspaces.FirstOrDefaultAsync(w => w.Id == workspaceId);
+        }
     }
 }

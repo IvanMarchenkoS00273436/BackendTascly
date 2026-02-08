@@ -6,16 +6,20 @@ using BackendTascly.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using System.Diagnostics;
 using System.Security.Claims;
 
 namespace BackendTascly.Controllers
 {
-    [Route("api/[controller]")]
+    [Authorize]
+    [Route("api/Workspaces")]
     [ApiController]
-    public class WorkspaceController(IWorkspaceService workspaceService) : ControllerBase
+    public class WorkspaceController(IWorkspaceService workspaceService, IMapper mapper) : ControllerBase
     {
-        [HttpPost, Authorize]
-        public async Task<ActionResult> CreateWorkspaceAsync(PostWorkspaceDto postWorkspaceDto)
+        [HttpPost]
+        // TODO: Authorization - only SuperAdmins can create a Workspace
+        public async Task<ActionResult> CreateWorkspace(PostWorkspaceDto postWorkspaceDto)
         {
             var userId = Guid.Parse(User.FindFirstValue("UserId")!);
             var result = await workspaceService.CreateWorkspaceAsync(postWorkspaceDto, userId);
@@ -23,8 +27,8 @@ namespace BackendTascly.Controllers
             return Ok("Workspace created successfully.");
         }
 
-        [HttpGet, Authorize]
-        public async Task<ActionResult> GetAllWorkspacesAsync()
+        [HttpGet]
+        public async Task<ActionResult> GetAllWorkspaces()
         {
             var organizationId = Guid.Parse(User.FindFirstValue("OrganizationId")!);
             var workspaces = await workspaceService.GetAllWorkspacesAsync(organizationId);
@@ -41,6 +45,17 @@ namespace BackendTascly.Controllers
             return Ok(workspaceDTOs);
         }
 
+        [HttpGet("{id:guid}")]
+        public async Task<ActionResult> GetWorkspaceById(Guid id)
+        {
+            var workspace = await workspaceService.GetWorkspaceByIdAsync(id);
 
+            if (workspace == null)
+                return NotFound();
+
+            var workspaceDto = mapper.Map<GetWorkspace>(workspace);
+
+            return Ok(workspaceDto);
+        }
     }
 }

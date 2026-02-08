@@ -31,9 +31,12 @@ namespace BackendTascly.Services
 
         public async Task<List<Workspace>> GetAllWorkspacesAsync(Guid organizationId)
         {
-            var workspaces =  await workspaceRepository.GetAllWorkspacesAsync(organizationId);
+            return await workspaceRepository.GetAllWorkspacesAsync(organizationId);
+        }
 
-            return workspaces;
+        public async Task<Workspace?> GetWorkspaceByIdAsync(Guid workspaceId)
+        {
+            return await workspaceRepository.GetWorkspaceByIdAsync(workspaceId);
         }
     }
 }
