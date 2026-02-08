@@ -28,5 +28,12 @@ namespace BackendTascly.Services
 
             return await workspaceRepository.AddWorkspaceAsync(workspace);
         }
+
+        public async Task<List<Workspace>> GetAllWorkspacesAsync(Guid organizationId)
+        {
+            var workspaces =  await workspaceRepository.GetAllWorkspacesAsync(organizationId);
+
+            return workspaces;
+        }
     }
 }

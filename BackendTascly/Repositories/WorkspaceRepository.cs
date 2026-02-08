@@ -1,5 +1,7 @@
-﻿using BackendTascly.Data;
+﻿using AutoMapper.Execution;
+using BackendTascly.Data;
 using BackendTascly.Entities;
+using Microsoft.EntityFrameworkCore;
 
 namespace BackendTascly.Repositories
 {
@@ -13,6 +15,14 @@ namespace BackendTascly.Repositories
 
             var affected = await context.SaveChangesAsync();
             return affected > 0; // >0 means at least one entity row was written
+        }
+        public async Task<List<Workspace>> GetAllWorkspacesAsync(Guid organizationId)
+        {
+            var workspaces = await context.Workspaces
+                                .Include(w => w.Members)
+                                .Where(w => w.OrganizationId == organizationId)
+                                .ToListAsync();
+            return workspaces;
         }
     }
 }

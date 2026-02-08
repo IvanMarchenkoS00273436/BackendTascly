@@ -22,5 +22,25 @@ namespace BackendTascly.Controllers
             if (!result) return BadRequest("Failed to create workspace.");
             return Ok("Workspace created successfully.");
         }
+
+        [HttpGet, Authorize]
+        public async Task<ActionResult> GetAllWorkspacesAsync()
+        {
+            var organizationId = Guid.Parse(User.FindFirstValue("OrganizationId")!);
+            var workspaces = await workspaceService.GetAllWorkspacesAsync(organizationId);
+
+            // temporary workspaceDTO using Select
+            var workspaceDTOs = workspaces.Select(w => new
+            {
+                w.Id,
+                w.Name,
+                w.OrganizationId,
+                Members = w.Members.Select(u => u.Username)
+            });
+
+            return Ok(workspaceDTOs);
+        }
+
+
     }
 }
