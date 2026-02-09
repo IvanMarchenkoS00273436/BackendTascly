@@ -28,5 +28,15 @@ namespace BackendTascly.Repositories
         {
             return await context.Workspaces.FirstOrDefaultAsync(w => w.Id == workspaceId);
         }
+
+        public async Task<bool> AddMemberToWorkspaceAsync(WorkspaceUserRole workspaceUserRole)
+        {
+            if(workspaceUserRole is null) return false;
+
+            context.WorkspaceUserRoles.Add(workspaceUserRole);
+
+            var affected = await context.SaveChangesAsync();
+            return affected > 0;
+        }
     }
 }

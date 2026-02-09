@@ -38,5 +38,31 @@ namespace BackendTascly.Services
         {
             return await workspaceRepository.GetWorkspaceByIdAsync(workspaceId);
         }
+
+        public async Task<bool> AddMemberToWorkspaceAsync(PostMemberToWorkspaceDto req, Guid userId)
+        {
+            // TODO: check if user who sends the request is Admin within a workspace
+
+            // find a member
+            var member = await usersRepository.FindByUserIdAsync(req.MemberId);
+            if (member is null) return false;
+
+            // find a workspace
+            var workspace = await workspaceRepository.GetWorkspaceByIdAsync(req.WorkspaceId);
+            if (workspace is null) return false;
+
+            // find a role
+            var role = await roleRepository.FindRoleByName(req.RoleName);
+            if (role is null) return false;
+
+            // add member to the workspace with requested rights 
+            var workspaceUserRole = new WorkspaceUserRole();
+            workspaceUserRole.User = member; 
+            workspaceUserRole.Workspace = workspace;
+            workspaceUserRole.Role = role;
+
+            return await workspaceRepository.AddMemberToWorkspaceAsync(workspaceUserRole);
+        }
+
     }
 }

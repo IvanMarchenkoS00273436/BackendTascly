@@ -20,5 +20,10 @@ namespace BackendTascly.Repositories
         {
             return await context.Roles.FirstAsync(r => r.Name == "Limited-access");
         }
+
+        public async Task<Role?> FindRoleByName(string roleName)
+        {
+            return await context.Roles.FirstOrDefaultAsync(r => r.Name == roleName);
+        }
     }
 }

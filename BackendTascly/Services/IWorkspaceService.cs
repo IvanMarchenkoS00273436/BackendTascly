@@ -9,5 +9,6 @@ namespace BackendTascly.Services
         Task<bool> CreateWorkspaceAsync(PostWorkspaceDto postWorkspaceDto, Guid organizationId);
         Task<List<Workspace>> GetAllWorkspacesAsync(Guid organizationId);
         Task<Workspace?> GetWorkspaceByIdAsync(Guid workspaceId);
+        Task<bool> AddMemberToWorkspaceAsync(PostMemberToWorkspaceDto req, Guid userId);
     }
 }

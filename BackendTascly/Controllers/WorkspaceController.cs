@@ -57,5 +57,16 @@ namespace BackendTascly.Controllers
 
             return Ok(workspaceDto);
         }
+
+        [HttpPost("Members")]
+        // TODO: Retrieve workspace from Route
+        // TODO: Authorization - only SuperAdmins can Add Members to Workspace
+        public async Task<ActionResult> AddMemberToWorkspace(PostMemberToWorkspaceDto req)
+        {
+            var userId = Guid.Parse(User.FindFirstValue("UserId")!); //who sends the request
+            var result = await workspaceService.AddMemberToWorkspaceAsync(req, userId);
+            if (!result) return BadRequest("Failed to create workspace.");
+            return Ok("Workspace created successfully.");
+        }
     }
 }

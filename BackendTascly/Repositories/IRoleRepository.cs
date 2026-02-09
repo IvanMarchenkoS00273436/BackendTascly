@@ -7,5 +7,6 @@ namespace BackendTascly.Repositories
         Task<Role> GetAdminRoleAsync();
         Task<Role> GetFullAccessRoleAsync();
         Task<Role> GetLimitedAccessRoleAsync();
+        Task<Role?> FindRoleByName(string roleName);
     }
 }
