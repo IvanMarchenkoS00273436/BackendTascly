@@ -10,10 +10,5 @@ namespace BackendTascly.Entities
 
         [Required, StringLength(50)]
         public string Name { get; set; }
-
-        [Required]
-        public Guid ProjectId { get; set; }
-        [ForeignKey("ProjectId")]
-        public virtual Project Project { get; set; }
     }
 }

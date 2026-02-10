@@ -1,4 +1,4 @@
-﻿namespace BackendTascly.Entities.ModelsDto
+﻿namespace BackendTascly.Data.ModelsDto
 {
     public class TokenResponseDto
     {

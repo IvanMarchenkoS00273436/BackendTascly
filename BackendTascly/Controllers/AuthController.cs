@@ -1,5 +1,4 @@
-﻿using BackendTascly.Entities.ModelsDto;
-using BackendTascly.Entities;
+﻿using BackendTascly.Entities;
 using BackendTascly.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -11,6 +10,8 @@ using System.Net;
 using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
+using BackendTascly.Data.ModelsDto;
+using BackendTascly.Data.ModelsDto.UsersDtos;
 
 namespace BackendTascly.Controllers
 {
@@ -19,12 +20,12 @@ namespace BackendTascly.Controllers
     public class AuthController(IAuthService authService) : ControllerBase
     {
         [HttpPost("register")]
-        public async Task<ActionResult<User>> Register(UserDto request)
+        public async Task<ActionResult<bool>> Register(PostUserDto request)
         {
-            var user = await authService.RegisterAsync(request);
-            if(user is null) return BadRequest("User already exists.");
+            var userResult = await authService.RegisterAsync(request);
+            if(userResult.Item1 == false) return BadRequest(userResult.Item2);
 
-            return Ok(user);
+            return Ok(true);
         }
 
         [HttpPost("login")]

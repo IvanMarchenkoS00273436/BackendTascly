@@ -4,6 +4,7 @@ using BackendTascly.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace BackendTascly.Migrations
 {
     [DbContext(typeof(TasclyDbContext))]
-    partial class TasclyDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260129224621_update-entities")]
+    partial class updateentities
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -44,7 +47,7 @@ namespace BackendTascly.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid?>("AssigneeId")
+                    b.Property<Guid>("AssigneeId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<Guid>("AuthorId")
@@ -214,6 +217,9 @@ namespace BackendTascly.Migrations
                     b.Property<Guid>("OrganizationId")
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<Guid?>("OrganizationId1")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<string>("PasswordHash")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -231,6 +237,8 @@ namespace BackendTascly.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("OrganizationId");
+
+                    b.HasIndex("OrganizationId1");
 
                     b.ToTable("Users");
                 });
@@ -278,11 +286,28 @@ namespace BackendTascly.Migrations
                     b.ToTable("WorkspaceUserRoles");
                 });
 
+            modelBuilder.Entity("UserWorkspace", b =>
+                {
+                    b.Property<Guid>("MembersId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("WorkspacesId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("MembersId", "WorkspacesId");
+
+                    b.HasIndex("WorkspacesId");
+
+                    b.ToTable("UserWorkspace");
+                });
+
             modelBuilder.Entity("BackendTascly.Entities.PTask", b =>
                 {
                     b.HasOne("BackendTascly.Entities.User", "AssignedTo")
                         .WithMany()
-                        .HasForeignKey("AssigneeId");
+                        .HasForeignKey("AssigneeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.HasOne("BackendTascly.Entities.User", "Author")
                         .WithMany()
@@ -363,10 +388,14 @@ namespace BackendTascly.Migrations
             modelBuilder.Entity("BackendTascly.Entities.User", b =>
                 {
                     b.HasOne("BackendTascly.Entities.Organization", "Organization")
-                        .WithMany("Members")
+                        .WithMany()
                         .HasForeignKey("OrganizationId")
                         .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
+
+                    b.HasOne("BackendTascly.Entities.Organization", null)
+                        .WithMany("Members")
+                        .HasForeignKey("OrganizationId1");
 
                     b.Navigation("Organization");
                 });
@@ -407,6 +436,21 @@ namespace BackendTascly.Migrations
                     b.Navigation("User");
 
                     b.Navigation("Workspace");
+                });
+
+            modelBuilder.Entity("UserWorkspace", b =>
+                {
+                    b.HasOne("BackendTascly.Entities.User", null)
+                        .WithMany()
+                        .HasForeignKey("MembersId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("BackendTascly.Entities.Workspace", null)
+                        .WithMany()
+                        .HasForeignKey("WorkspacesId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("BackendTascly.Entities.Organization", b =>

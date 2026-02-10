@@ -1,5 +1,4 @@
 ﻿using BackendTascly.Data;
-using BackendTascly.Entities.ModelsDto;
 using BackendTascly.Entities;
 using BackendTascly.Repositories;
 using Microsoft.AspNetCore.Identity;
@@ -8,6 +7,9 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
+using BackendTascly.Data.ModelsDto;
+using BackendTascly.Data.ModelsDto.UsersDtos;
+using BackendTascly.BusinessLayer;
 
 namespace BackendTascly.Services
 {
@@ -29,21 +31,33 @@ namespace BackendTascly.Services
             return await CreateTokenResponse(user);
         }
 
-        public async Task<User> RegisterAsync(UserDto request)
+        public async Task<(bool, string)> RegisterAsync(PostUserDto request)
         {
-            if(await usersRepository.UserExists(request.Username)) return null;
+            var validationResult = AuthBusiness.IsPostUserDtoValid(request);
+            if(validationResult.Item1 == false) return validationResult;
+            
+
+            if (await usersRepository.UserExists(request.Username)) return (false, "User already exist");
 
             var user = new User();
 
             var hashedPassword = new PasswordHasher<User>()
                 .HashPassword(user, request.Password);
 
+            // AutoMapper in future maybe
             user.Username = request.Username;
             user.PasswordHash = hashedPassword;
+            user.FirstName = request.FirstName;
+            user.LastName = request.LastName;
+            user.Organization = new Organization
+            {
+                Name = request.OrganizationName
+            };
+            user.IsSuperAdmin = true;
 
             await usersRepository.AddUserAsync(user);
 
-            return user;
+            return (true, "User was successfully created");
         }
 
         private async Task<User?> ValidateRefreshTokenAsync(Guid userId, string refreshToken)
@@ -61,8 +75,12 @@ namespace BackendTascly.Services
         {
             var claims = new List<Claim>
             {
-                new Claim(ClaimTypes.Name, user.Username),
-                new Claim(ClaimTypes.NameIdentifier, user.Id.ToString())
+                new Claim("UserId", user.Id.ToString()),
+                new Claim("Username", user.Username),
+                new Claim("IsSuperAdmin", user.IsSuperAdmin.ToString()),
+                new Claim("OrganizationId", user.OrganizationId.ToString()),
+                new Claim("FirstName", user.FirstName),
+                new Claim("LastName", user.LastName),
             };
 
             var key = new SymmetricSecurityKey(

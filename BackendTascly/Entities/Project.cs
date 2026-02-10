@@ -13,16 +13,22 @@ namespace BackendTascly.Entities
 
         [StringLength(1000)]
         public string Description { get; set; }
-
+        
+        //relationships
         [Required]
         public Guid OwnerId { get; set; }
         [ForeignKey("OwnerId")]
         public virtual User Owner { get; set; }
 
-        public virtual ICollection<User> Members { get; set; } = new List<User>();
+        [Required]
+        public Guid WorkspaceId { get; set; }
+        [ForeignKey("WorkspaceId")]
+        public virtual Workspace Workspace { get; set; }
+
+
+        //public virtual ICollection<User> Members { get; set; } = new List<User>();
         public virtual ICollection<PTaskStatus> TaskStatuses { get; set; } = new List<PTaskStatus>();
         public virtual ICollection<TaskImportance> TaskImportances { get; set; } = new List<TaskImportance>();
         public virtual ICollection<PTask> Tasks { get; set; } = new List<PTask>();
-        public virtual ICollection<Role> Roles { get; set; } = new List<Role>();
     }
 }

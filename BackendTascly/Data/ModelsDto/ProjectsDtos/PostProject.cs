@@ -1,4 +1,4 @@
-﻿namespace BackendTascly.Entities.ModelsDto.ProjectsDtos
+﻿namespace BackendTascly.Data.ModelsDto.ProjectsDtos
 {
     public class PostProject
     {
