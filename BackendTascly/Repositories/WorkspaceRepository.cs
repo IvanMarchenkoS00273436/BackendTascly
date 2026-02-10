@@ -38,5 +38,15 @@ namespace BackendTascly.Repositories
             var affected = await context.SaveChangesAsync();
             return affected > 0;
         }
+
+        public async Task<List<WorkspaceUserRole>> GetWorkspaceMembers(Guid workspaceId)
+        {
+            var workspaceUserRoles = await context.WorkspaceUserRoles
+                                        .Include(wur => wur.User)
+                                        .Include(wur => wur.Role)
+                                        .Where(wur => wur.WorkspaceId == workspaceId)
+                                        .ToListAsync();
+            return workspaceUserRoles;
+        }
     }
 }

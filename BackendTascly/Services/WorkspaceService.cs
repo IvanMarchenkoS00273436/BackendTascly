@@ -64,5 +64,9 @@ namespace BackendTascly.Services
             return await workspaceRepository.AddMemberToWorkspaceAsync(workspaceUserRole);
         }
 
+        public async Task<List<WorkspaceUserRole>> GetWorkspaceMembers(Guid workspaceId)
+        {
+            return await workspaceRepository.GetWorkspaceMembers(workspaceId);
+        }
     }
 }

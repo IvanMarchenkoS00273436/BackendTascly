@@ -8,5 +8,6 @@ namespace BackendTascly.Repositories
         Task<List<Workspace>> GetAllWorkspacesAsync(Guid organizationId);
         Task<Workspace?> GetWorkspaceByIdAsync(Guid workspaceId);
         Task<bool> AddMemberToWorkspaceAsync(WorkspaceUserRole workspaceUserRole);
+        Task<List<WorkspaceUserRole>> GetWorkspaceMembers(Guid workspaceId);
     }
 }
