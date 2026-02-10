@@ -2,7 +2,6 @@
 {
     public class PostMemberToWorkspaceDto
     {
-        public Guid WorkspaceId { get; set; }
         public Guid MemberId { get; set; }
         public string RoleName { get; set; } = string.Empty; // may later change to RoleID
     }

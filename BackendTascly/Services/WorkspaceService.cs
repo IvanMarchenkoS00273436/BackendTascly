@@ -39,7 +39,7 @@ namespace BackendTascly.Services
             return await workspaceRepository.GetWorkspaceByIdAsync(workspaceId);
         }
 
-        public async Task<bool> AddMemberToWorkspaceAsync(PostMemberToWorkspaceDto req, Guid userId)
+        public async Task<bool> AddMemberToWorkspaceAsync(PostMemberToWorkspaceDto req, Guid userId, Guid workspaceId)
         {
             // TODO: check if user who sends the request is Admin within a workspace
 
@@ -48,7 +48,7 @@ namespace BackendTascly.Services
             if (member is null) return false;
 
             // find a workspace
-            var workspace = await workspaceRepository.GetWorkspaceByIdAsync(req.WorkspaceId);
+            var workspace = await workspaceRepository.GetWorkspaceByIdAsync(workspaceId);
             if (workspace is null) return false;
 
             // find a role
