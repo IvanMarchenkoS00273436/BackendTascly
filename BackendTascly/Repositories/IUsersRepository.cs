@@ -9,5 +9,6 @@ namespace BackendTascly.Repositories
         Task<User?> FindByUserNameAsync(string username);
         Task SaveChangesAsync();
         Task<User?> FindByUserIdAsync(Guid userId);
+        Task<List<User>> GetAllUsers(Guid organizationId);
     }
 }

@@ -32,5 +32,10 @@ namespace BackendTascly.Repositories
         {
             return await context.Users.FirstOrDefaultAsync(u => u.Id == userId);
         }
+
+        public async Task<List<User>> GetAllUsers(Guid organizationId)
+        {
+            return await context.Users.Where(u => u.OrganizationId == organizationId).ToListAsync();
+        }
     }
 }
