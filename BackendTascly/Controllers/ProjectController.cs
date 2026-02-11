@@ -3,23 +3,36 @@ using BackendTascly.Data.ModelsDto.ProjectsDtos;
 using BackendTascly.Data.ModelsDto.UsersDtos;
 using BackendTascly.Entities;
 using BackendTascly.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BackendTascly.Controllers
 {
-    [Route("api/Workspaces/{workspaceId}/Projects")]
+    [Route("api/Projects")]
     [ApiController]
+    [Authorize]
     public class ProjectController(IProjectService projectService, IMapper mapper) : ControllerBase
     {
         [HttpGet]
-        public async Task<ActionResult> GetWorkspaceProjects(Guid workspaceId)
+        public async Task<ActionResult> GetProjectsByWorkspaceId(Guid workspaceId)
         {
-            var projects = await projectService.GetWorkspaceProjects(workspaceId);
+            var projects = await projectService.GetProjectsByWorkspaceId(workspaceId);
 
             var projectsDto = mapper.Map<List<GetProject>>(projects);
 
             return Ok(projectsDto);
+        }
+
+        [HttpGet("{projectId:guid}")]
+        public async Task<ActionResult> GetProjectById(Guid projectId)
+        {
+            var project = await projectService.GetProjectByIdAsync(projectId);
+            if (project is null) return NotFound("Project not found.");
+
+            var projectDto = mapper.Map<GetProject>(project);
+
+            return Ok(projectDto);
         }
 
         //[HttpGet("by-owner/{ownerId:guid}")]

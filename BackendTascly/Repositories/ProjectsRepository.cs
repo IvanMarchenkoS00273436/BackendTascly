@@ -41,18 +41,16 @@ namespace BackendTascly.Repositories
         public Task<Project?> GetProjectById(Guid projectId)
         {
             var project = context.Projects
-                //.Include(p => p.Members)
                 .Include(p => p.TaskStatuses)
                 .Include(p => p.TaskImportances)
                 .Include(p => p.Tasks)
-                //.Include(p => p.Roles)
-                .Include(p => p.Owner)
+                //.Include(p => p.Owner)
                 .FirstOrDefaultAsync(p => p.Id == projectId);
 
             return project;
         }
 
-        public async Task<List<Project>> GetWorkspaceProjects(Guid workspaceId)
+        public async Task<List<Project>> GetProjectsByWorkspaceId(Guid workspaceId)
         {
             return await context.Projects.Where(p => p.WorkspaceId == workspaceId).ToListAsync();
         }
