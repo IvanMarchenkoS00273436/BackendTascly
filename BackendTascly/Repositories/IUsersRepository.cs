@@ -1,4 +1,5 @@
-﻿using BackendTascly.Entities;
+﻿using BackendTascly.Data.ModelsDto.UsersDtos;
+using BackendTascly.Entities;
 
 namespace BackendTascly.Repositories
 {
@@ -10,5 +11,6 @@ namespace BackendTascly.Repositories
         Task SaveChangesAsync();
         Task<User?> FindByUserIdAsync(Guid userId);
         Task<List<User>> GetAllUsers(Guid organizationId);
+        Task UpdateUserAsync(User user);
     }
 }

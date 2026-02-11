@@ -31,6 +31,23 @@ namespace BackendTascly.Controllers
             return Ok(userDtos);
         }
 
+        [HttpGet("GetUserProfile")]
+        public async Task<ActionResult> GetUserProfile()
+        {
+            var user = await userService.FindByUserIdAsync(Guid.Parse(User.FindFirstValue("UserId")!));
+            GetUserProfile userProfile = mapper.Map<GetUserProfile>(user);
+
+            return Ok(userProfile);
+        }
+
+        [HttpPut("UpdateUserProfile")]
+        public async Task<ActionResult> PutUserProfile(PutUserProfile putUserProfile)
+        {
+            var userId = Guid.Parse(User.FindFirstValue("UserId")!);
+            await userService.UpdateUserProfileAsync(userId, putUserProfile);
+
+            return Ok();
+        }
 
     }
 }

@@ -1,4 +1,5 @@
 ﻿using BackendTascly.Data;
+using BackendTascly.Data.ModelsDto.UsersDtos;
 using BackendTascly.Entities;
 using Microsoft.EntityFrameworkCore;
 
@@ -30,12 +31,20 @@ namespace BackendTascly.Repositories
 
         public async Task<User?> FindByUserIdAsync(Guid userId)
         {
-            return await context.Users.FirstOrDefaultAsync(u => u.Id == userId);
+            return await context.Users
+                .Include(u => u.Organization)
+                .FirstOrDefaultAsync(u => u.Id == userId);
         }
 
         public async Task<List<User>> GetAllUsers(Guid organizationId)
         {
             return await context.Users.Where(u => u.OrganizationId == organizationId).ToListAsync();
+        }
+
+        public async Task UpdateUserAsync(User user)
+        {
+            context.Users.Update(user);
+            await context.SaveChangesAsync();
         }
     }
 }
