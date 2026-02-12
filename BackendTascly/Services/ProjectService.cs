@@ -10,23 +10,16 @@ namespace BackendTascly.Services
             project.WorkspaceId = workspaceId; // project must be created within a Workspace      
             project.OwnerId = userId; //assign owner to the project
 
-            //add default list of Task Statuses to the project
-            List<PTaskStatus> taskStatuses = new List<PTaskStatus>()
-            {
-                new PTaskStatus() { Name = "ToDo" },
-                new PTaskStatus() { Name = "InProgress" },
-                new PTaskStatus() { Name = "Done" }
-            };
-            project.TaskStatuses.Concat(taskStatuses);
+            //add default Task Statuses to the project
+            project.TaskStatuses.Add(new PTaskStatus() { Name = "ToDo" });            
+            project.TaskStatuses.Add(new PTaskStatus() { Name = "InProgress" });
+            project.TaskStatuses.Add(new PTaskStatus() { Name = "Done" });
 
-            //add default list of Task Importance to the project
-            List<TaskImportance> taskImportances = new List<TaskImportance>()
-            {
-                new TaskImportance() { Name = "Low"},
-                new TaskImportance() { Name = "Medium"},
-                new TaskImportance() { Name = "High"},
-            };
-            project.TaskImportances.Concat(taskImportances);
+
+            //add default Task Importance to the project
+            project.TaskImportances.Add(new TaskImportance() { Name = "Low" });
+            project.TaskImportances.Add(new TaskImportance() { Name = "Medium" });
+            project.TaskImportances.Add(new TaskImportance() { Name = "High" });
 
 
             return projectsRepository.AddProjectAsync(project);
