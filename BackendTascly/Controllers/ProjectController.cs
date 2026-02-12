@@ -67,12 +67,12 @@ namespace BackendTascly.Controllers
 
 
 
-        //[HttpDelete("{projectId:guid}")]
-        //public async Task<ActionResult> DeleteProjectAsync(Guid projectId)
-        //{
-        //    var result = await projectService.DeleteProjectAsync(projectId);
-        //    if (!result) return NotFound("Project not found or could not be deleted.");
-        //    return Ok("Project deleted successfully.");
-        //}
+        [HttpDelete("{projectId:guid}")]
+        public async Task<ActionResult> DeleteProjectAsync(Guid projectId)
+        {
+            var result = await projectService.DeleteProjectAsync(projectId);
+            if (!result) return NotFound("Project not found or could not be deleted.");
+            return Ok("Project deleted successfully.");
+        }
     }
 }

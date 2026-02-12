@@ -19,6 +19,8 @@ namespace BackendTascly.Repositories
         public async Task<bool> DeleteProjectAsync(Guid projectId)
         {
             var project = await context.Projects.FindAsync(projectId);
+            if (project is null) return false;
+            
             context.Projects.Remove(project);
 
             var affected = await context.SaveChangesAsync();
