@@ -12,7 +12,7 @@ namespace BackendTascly.Controllers
 {
     [Route("api/Projects")]
     [ApiController]
-    [Authorize]
+    //[Authorize]
     public class ProjectController(IProjectService projectService, IMapper mapper) : ControllerBase
     {
         [HttpGet("Workspaces/{workspaceId}")]
@@ -46,26 +46,6 @@ namespace BackendTascly.Controllers
             if (!result) return BadRequest("Failed to create project.");
             return Ok("Project created successfully.");
         }
-
-        //[HttpGet("by-owner/{ownerId:guid}")]
-        //public async Task<ActionResult> GetAllProjectsByOwnerIdAsync(Guid ownerId)
-        //{
-        //    var projects = await projectService.GetAllProjectsByOwnerIdAsync(ownerId);
-        //    var projectsdto = mapper.Map<List<GetProject>>(projects);
-        //    return Ok(projectsdto);
-        //}
-
-        //[HttpGet("{projectId:guid}")]
-        //public async Task<ActionResult> GetProjectByIdAsync(Guid projectId)
-        //{
-        //    var project = await projectService.GetProjectByIdAsync(projectId);
-        //    if (project is null) return NotFound("Project not found.");
-
-        //    var projectdto = mapper.Map<GetProject>(project);
-        //    return Ok(projectdto);
-        //}
-
-
 
         [HttpDelete("{projectId:guid}")]
         public async Task<ActionResult> DeleteProjectAsync(Guid projectId)

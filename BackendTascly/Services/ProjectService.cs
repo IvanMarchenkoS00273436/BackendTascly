@@ -30,11 +30,6 @@ namespace BackendTascly.Services
             return projectsRepository.DeleteProjectAsync(projectId);
         }
 
-        public Task<List<Project>> GetAllProjectsByOwnerIdAsync(Guid ownerId)
-        {
-            return projectsRepository.GetAllProjectsByOwnerId(ownerId);
-        }
-
         public Task<Project?> GetProjectByIdAsync(Guid projectId)
         {
             return projectsRepository.GetProjectById(projectId);
