@@ -12,7 +12,7 @@ namespace BackendTascly.Controllers
 {
     [Route("api/Projects")]
     [ApiController]
-    //[Authorize]
+    [Authorize]
     public class ProjectController(IProjectService projectService, IMapper mapper) : ControllerBase
     {
         [HttpGet("Workspaces/{workspaceId}")]
