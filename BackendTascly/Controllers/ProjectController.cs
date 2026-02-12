@@ -1,40 +1,48 @@
 ﻿using AutoMapper;
+using BackendTascly.Data.ModelsDto.ProjectsDtos;
+using BackendTascly.Data.ModelsDto.UsersDtos;
+using BackendTascly.Entities;
 using BackendTascly.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using BackendTascly.Entities;
-using BackendTascly.Data.ModelsDto.ProjectsDtos;
+using System.Security.Claims;
 
 namespace BackendTascly.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/Projects")]
     [ApiController]
+    [Authorize]
     public class ProjectController(IProjectService projectService, IMapper mapper) : ControllerBase
     {
-        [HttpGet("by-owner/{ownerId:guid}")]
-        public async Task<ActionResult> GetAllProjectsByOwnerIdAsync(Guid ownerId)
+        [HttpGet("Workspaces/{workspaceId}")]
+        public async Task<ActionResult> GetProjectsByWorkspaceId(Guid workspaceId)
         {
-            var projects = await projectService.GetAllProjectsByOwnerIdAsync(ownerId);
-            var projectsdto = mapper.Map<List<GetProject>>(projects);
-            return Ok(projectsdto);
+            var projects = await projectService.GetProjectsByWorkspaceId(workspaceId);
+
+            var projectsDto = mapper.Map<List<GetProject>>(projects);
+
+            return Ok(projectsDto);
         }
 
         [HttpGet("{projectId:guid}")]
-        public async Task<ActionResult> GetProjectByIdAsync(Guid projectId)
+        public async Task<ActionResult> GetProjectById(Guid projectId)
         {
             var project = await projectService.GetProjectByIdAsync(projectId);
             if (project is null) return NotFound("Project not found.");
 
-            var projectdto = mapper.Map<GetProject>(project);
-            return Ok(projectdto);
+            var projectDto = mapper.Map<GetProject>(project);
+
+            return Ok(projectDto);
         }
 
-        [HttpPost]
-        public async Task<ActionResult> CreateProjectAsync(PostProject postProject)
+        [HttpPost("Workspaces/{workspaceId}")]
+        public async Task<ActionResult> CreateProjectAsync(PostProject postProject, Guid workspaceId)
         {
             var projectEntity = mapper.Map<Project>(postProject);
-            projectEntity.OwnerId = Guid.Parse("22222222-2222-2222-2222-222222222222"); // For now needs to be replaced with actual user id from auth
-            var result = await projectService.CreateProjectAsync(projectEntity);
+            var userId = Guid.Parse(User.FindFirstValue("UserId")!);
+            
+            var result = await projectService.CreateProjectAsync(projectEntity, userId, workspaceId);
             if (!result) return BadRequest("Failed to create project.");
             return Ok("Project created successfully.");
         }
