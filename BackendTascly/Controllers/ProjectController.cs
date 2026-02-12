@@ -6,6 +6,7 @@ using BackendTascly.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
 namespace BackendTascly.Controllers
 {
@@ -14,7 +15,7 @@ namespace BackendTascly.Controllers
     [Authorize]
     public class ProjectController(IProjectService projectService, IMapper mapper) : ControllerBase
     {
-        [HttpGet]
+        [HttpGet("Workspaces/{workspaceId}")]
         public async Task<ActionResult> GetProjectsByWorkspaceId(Guid workspaceId)
         {
             var projects = await projectService.GetProjectsByWorkspaceId(workspaceId);
@@ -35,6 +36,17 @@ namespace BackendTascly.Controllers
             return Ok(projectDto);
         }
 
+        [HttpPost("Workspaces/{workspaceId}")]
+        public async Task<ActionResult> CreateProjectAsync(PostProject postProject, Guid workspaceId)
+        {
+            var projectEntity = mapper.Map<Project>(postProject);
+            var userId = Guid.Parse(User.FindFirstValue("UserId")!);
+            
+            var result = await projectService.CreateProjectAsync(projectEntity, userId, workspaceId);
+            if (!result) return BadRequest("Failed to create project.");
+            return Ok("Project created successfully.");
+        }
+
         //[HttpGet("by-owner/{ownerId:guid}")]
         //public async Task<ActionResult> GetAllProjectsByOwnerIdAsync(Guid ownerId)
         //{
@@ -53,15 +65,7 @@ namespace BackendTascly.Controllers
         //    return Ok(projectdto);
         //}
 
-        //[HttpPost]
-        //public async Task<ActionResult> CreateProjectAsync(PostProject postProject)
-        //{
-        //    var projectEntity = mapper.Map<Project>(postProject);
-        //    projectEntity.OwnerId = Guid.Parse("22222222-2222-2222-2222-222222222222"); // For now needs to be replaced with actual user id from auth
-        //    var result = await projectService.CreateProjectAsync(projectEntity);
-        //    if (!result) return BadRequest("Failed to create project.");
-        //    return Ok("Project created successfully.");
-        //}
+
 
         //[HttpDelete("{projectId:guid}")]
         //public async Task<ActionResult> DeleteProjectAsync(Guid projectId)
