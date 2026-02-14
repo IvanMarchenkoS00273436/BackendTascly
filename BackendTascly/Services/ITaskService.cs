@@ -1,7 +1,10 @@
-﻿namespace BackendTascly.Services
+﻿
+using BackendTascly.Entities;
+
+namespace BackendTascly.Services
 {
     public interface ITaskService
     {
-
+        Task<List<PTask>> GetTasksByProjectId(Guid projectId);
     }
 }
