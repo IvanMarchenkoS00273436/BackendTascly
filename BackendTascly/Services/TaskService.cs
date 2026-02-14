@@ -19,5 +19,15 @@ namespace BackendTascly.Services
         {
             return await taskRepository.GetTasksByAssigneeId(assigneeId);
         }
+
+        public async Task<bool> CreateTaskAsync(PTask taskEntity, Guid userId, Guid projectId)
+        {
+            taskEntity.ProjectId = projectId; // Task must be created within a Project      
+            taskEntity.AuthorId = userId; //assign task Author 
+            taskEntity.CreationDate = DateTime.Now;
+            taskEntity.LastModifiedDate = DateTime.Now;
+
+            return await taskRepository.AddTaskAsync(taskEntity);
+        }
     }
 }

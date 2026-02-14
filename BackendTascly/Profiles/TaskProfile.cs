@@ -25,10 +25,15 @@ namespace BackendTascly.Profiles
                 .ForMember(dest => dest.AuthorId, src => src.MapFrom(x => x.AuthorId))
                 .ForMember(dest => dest.AssigneeId, src => src.MapFrom(x => x.AssigneeId));
 
-            // Mapping between PostProject DTO and Project (Project from PostProject)
-            CreateMap<PostProject, Project>()
+            // Mapping between PostTask DTO and PTask (PTask from PostTask)
+            CreateMap<PostTask, PTask>()
                 .ForMember(dest => dest.Name, src => src.MapFrom(x => x.Name))
-                .ForMember(dest => dest.Description, src => src.MapFrom(x => x.Description));
+                .ForMember(dest => dest.Description, src => src.MapFrom(x => x.Description))
+                .ForMember(dest => dest.StartDate, src => src.MapFrom(x => x.StartDate))
+                .ForMember(dest => dest.DueDate, src => src.MapFrom(x => x.DueDate))
+                .ForMember(dest => dest.StatusId, src => src.MapFrom(x => x.StatusId))
+                .ForMember(dest => dest.ImportanceId, src => src.MapFrom(x => x.ImportanceId))
+                .ForMember(dest => dest.AssigneeId, src => src.MapFrom(x => x.AssigneeId));
         }
     }
 }

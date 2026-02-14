@@ -31,5 +31,15 @@ namespace BackendTascly.Repositories
                             .Where(t => t.AssigneeId == assigneeId)
                             .ToListAsync();
         }
+
+        public async Task<bool> AddTaskAsync(PTask task)
+        {
+            if (task is null) return false;
+
+            context.Tasks.Add(task);
+
+            var affected = await context.SaveChangesAsync();
+            return affected > 0; 
+        }
     }
 }

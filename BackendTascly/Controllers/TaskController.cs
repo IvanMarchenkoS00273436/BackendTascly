@@ -1,9 +1,11 @@
 ﻿using AutoMapper;
 using BackendTascly.Data.ModelsDto.ProjectsDtos;
 using BackendTascly.Data.ModelsDto.TaskDtos;
+using BackendTascly.Entities;
 using BackendTascly.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
 namespace BackendTascly.Controllers
 {
@@ -41,6 +43,17 @@ namespace BackendTascly.Controllers
             var tasksDto = mapper.Map<List<GetTask>>(tasks);
 
             return Ok(tasksDto);
+        }
+
+        [HttpPost("Projects/{projectId}")]
+        public async Task<ActionResult> CreateTask(PostTask postTask, Guid projectId)
+        {
+            var taskEntity = mapper.Map<PTask>(postTask);
+            var userId = Guid.Parse(User.FindFirstValue("UserId")!);
+
+            var result = await taskService.CreateTaskAsync(taskEntity, userId, projectId);
+            if (!result) return BadRequest("Failed to create Task.");
+            return Ok("Task created successfully.");
         }
     }
 }
