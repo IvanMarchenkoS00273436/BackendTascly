@@ -14,5 +14,13 @@ namespace BackendTascly.Repositories
                             .Where(t => t.ProjectId == projectId)
                             .ToListAsync();
         }
+
+        public async Task<PTask?> GetTaskById(Guid taskId)
+        {
+            return await context.Tasks
+                            .Include(t => t.Status)
+                            .Include(t => t.Importance)
+                            .FirstOrDefaultAsync(t => t.Id == taskId);
+        }
     }
 }

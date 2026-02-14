@@ -21,5 +21,16 @@ namespace BackendTascly.Controllers
 
             return Ok(tasksDto);
         }
+
+        [HttpGet("{taskId}")]
+        public async Task<ActionResult> GetTaskById(Guid taskId)
+        {
+            var task = await taskService.GetTaskById(taskId);
+            if (task is null) return NotFound("Task not found.");
+
+            var taskDto = mapper.Map<GetTask>(task);
+
+            return Ok(taskDto);
+        }
     }
 }
