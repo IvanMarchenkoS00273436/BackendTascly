@@ -14,5 +14,10 @@ namespace BackendTascly.Services
         {
             return await taskRepository.GetTaskById(taskId);
         }
+
+        public async Task<List<PTask>> GetTasksByAssigneeId(Guid assigneeId)
+        {
+            return await taskRepository.GetTasksByAssigneeId(assigneeId);
+        }
     }
 }

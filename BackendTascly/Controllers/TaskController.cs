@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace BackendTascly.Controllers
 {
-    //[Authorize]
+    [Authorize]
     [Route("api/Tasks")]
     [ApiController]
     public class TaskController(ITaskService taskService, IMapper mapper): ControllerBase
@@ -31,6 +31,16 @@ namespace BackendTascly.Controllers
             var taskDto = mapper.Map<GetTask>(task);
 
             return Ok(taskDto);
+        }
+
+        [HttpGet]
+        public async Task<ActionResult> GetTasksByAssigneeId(Guid assigneeId)
+        {
+            var tasks = await taskService.GetTasksByAssigneeId(assigneeId);
+
+            var tasksDto = mapper.Map<List<GetTask>>(tasks);
+
+            return Ok(tasksDto);
         }
     }
 }
