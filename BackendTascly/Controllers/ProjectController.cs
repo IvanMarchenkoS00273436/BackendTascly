@@ -60,7 +60,13 @@ namespace BackendTascly.Controllers
         {
             var statuses = await projectService.GetProjectStatuses(projectId);
 
-            //var tasksDto = mapper.Map<List<GetTask>>(tasks);
+            return Ok(statuses);
+        }
+
+        [HttpGet("{projectId}/Importances")]
+        public async Task<ActionResult> GetProjectImportances(Guid projectId)
+        {
+            var statuses = await projectService.GetProjectImportances(projectId);
 
             return Ok(statuses);
         }

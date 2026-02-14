@@ -44,5 +44,10 @@ namespace BackendTascly.Services
         {
             return await projectsRepository.GetProjectStatuses(projectId);
         }
+
+        public async Task<List<TaskImportance>> GetProjectImportances(Guid projectId)
+        {
+            return await projectsRepository.GetProjectImportances(projectId);
+        }
     }
 }
