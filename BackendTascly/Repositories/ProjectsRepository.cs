@@ -38,5 +38,10 @@ namespace BackendTascly.Repositories
         {
             return await context.Projects.Where(p => p.WorkspaceId == workspaceId).ToListAsync();
         }
+
+        public async Task<List<PTaskStatus>> GetProjectStatuses(Guid projectId)
+        {
+            return await context.TaskStatuses.Where(ts => ts.ProjectId == projectId).ToListAsync();
+        }
     }
 }

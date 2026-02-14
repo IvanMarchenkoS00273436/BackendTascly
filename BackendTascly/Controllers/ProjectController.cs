@@ -54,5 +54,15 @@ namespace BackendTascly.Controllers
             if (!result) return NotFound("Project not found or could not be deleted.");
             return Ok("Project deleted successfully.");
         }
+
+        [HttpGet("{projectId}/Statuses")]
+        public async Task<ActionResult> GetProjectStatuses(Guid projectId)
+        {
+            var statuses = await projectService.GetProjectStatuses(projectId);
+
+            //var tasksDto = mapper.Map<List<GetTask>>(tasks);
+
+            return Ok(statuses);
+        }
     }
 }
