@@ -8,5 +8,7 @@ namespace BackendTascly.Repositories
         Task<bool> AddProjectAsync(Project project);
         Task<bool> DeleteProjectAsync(Guid projectId);
         Task<List<Project>> GetProjectsByWorkspaceId(Guid workspaceId);
+        Task<List<PTaskStatus>> GetProjectStatuses(Guid projectId);
+        Task<List<TaskImportance>> GetProjectImportances(Guid projectId);
     }
 }
