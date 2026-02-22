@@ -58,21 +58,26 @@ namespace BackendTascly.Controllers
         }
 
         [HttpPatch("{taskId}")]
-        public async Task<ActionResult> UpdateTask(JsonPatchDocument<PTask> putTask ,Guid taskId)
+        public async Task<ActionResult> UpdateTask(
+            [FromBody] JsonPatchDocument<UpdateTaskDto> jsonPatch, Guid taskId
+            )
         {
-            //TODO: make some of the Task properties immutable 
-            var task = await taskService.GetTaskById(taskId); // get task for update
+            var task = await taskService.GetTaskById(taskId); // get existing task for update
 
             if (task is null) return NotFound();
 
-            //var taskDto = mapper.Map<PutTask>(task); //convert task to putTask for deserialization
+            var updateTaskDto = mapper.Map<UpdateTaskDto>(task); // extract updateTaskDto from existing task
 
-            putTask.ApplyTo(task);
+            jsonPatch.ApplyTo(updateTaskDto, ModelState); //apply JsonPatchDocument<UpdateTaskDto> changes to updateTaskDto
 
-            //task = mapper.Map<PTask>(taskDto);
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            var updatedTask = mapper.Map(updateTaskDto, task); // update task with data from updateTaskDto
+
             var userId = Guid.Parse(User.FindFirstValue("UserId")!);
 
-            var result = await taskService.UpdateTaskAsync(taskId, task, userId);
+            var result = await taskService.UpdateTaskAsync(taskId, updatedTask, userId);
             if (!result) return BadRequest("Failed to update Task.");
             return Ok("Task updated successfully.");
         }
