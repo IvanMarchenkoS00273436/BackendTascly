@@ -41,5 +41,15 @@ namespace BackendTascly.Repositories
             var affected = await context.SaveChangesAsync();
             return affected > 0; 
         }
+
+        public async Task<bool> UpdateTaskAsync(PTask task)
+        {
+            if (task is null) return false;
+
+            context.Tasks.Update(task);
+
+            var affected = await context.SaveChangesAsync();
+            return affected > 0;
+        }
     }
 }

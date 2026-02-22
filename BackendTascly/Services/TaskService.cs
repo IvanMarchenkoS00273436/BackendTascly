@@ -29,5 +29,10 @@ namespace BackendTascly.Services
 
             return await taskRepository.AddTaskAsync(taskEntity);
         }
+
+        public async Task<bool> UpdateTaskAsync(Guid taskId, PTask taskEntity, Guid userId)
+        {
+            return await taskRepository.UpdateTaskAsync(taskEntity);
+        }
     }
 }
