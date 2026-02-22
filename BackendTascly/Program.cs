@@ -2,9 +2,11 @@ using BackendTascly.Data;
 using BackendTascly.Repositories;
 using BackendTascly.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.OpenApi;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi.Models;
 using Scalar.AspNetCore;
 using System.Text;
 
@@ -25,7 +27,8 @@ builder.Services.AddCors(options =>
 
 builder.Services.AddControllers().AddNewtonsoftJson();
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
-builder.Services.AddOpenApi();
+//builder.Services.AddOpenApi();
+builder.Services.AddOpenApi("v1", options => { options.AddDocumentTransformer<BearerSecuritySchemeTransformer>(); });
 builder.Services.AddDbContext<TasclyDbContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("TasclyDatabase")));
 
 builder.Services.AddScoped<IAuthService, AuthService>();
@@ -82,3 +85,33 @@ app.UseAuthorization();
 app.MapControllers();
 
 app.Run();
+
+// OpenApi Transformer
+internal sealed class BearerSecuritySchemeTransformer(Microsoft.AspNetCore.Authentication.IAuthenticationSchemeProvider authenticationSchemeProvider) : IOpenApiDocumentTransformer
+{
+    public async Task TransformAsync(OpenApiDocument document, OpenApiDocumentTransformerContext context, CancellationToken cancellationToken)
+    {
+        var authenticationSchemes = await authenticationSchemeProvider.GetAllSchemesAsync();
+
+        if (authenticationSchemes.Any(authScheme => authScheme.Name == "Bearer"))
+        {
+            document.Components ??= new OpenApiComponents();
+
+            var securitySchemeId = "Bearer";
+
+            document.Components.SecuritySchemes.Add(securitySchemeId, new OpenApiSecurityScheme
+            {
+                Type = SecuritySchemeType.Http,
+                Scheme = "bearer",
+                In = ParameterLocation.Header,
+                BearerFormat = "Json Web Token"
+            });
+
+            // Add "Bearer" scheme as a requirement for the API as a whole
+            document.SecurityRequirements.Add(new OpenApiSecurityRequirement
+            {
+                [new OpenApiSecurityScheme { Reference = new OpenApiReference { Id = securitySchemeId, Type = ReferenceType.SecurityScheme } }] = Array.Empty<string>()
+            });
+        }
+    }
+}
