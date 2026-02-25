@@ -13,10 +13,10 @@ namespace BackendTascly.Entities
         public string Name { get; set; }
 
         [StringLength(1000)]
-        public string Description { get; set; }
+        public string? Description { get; set; }
 
-        public DateTime StartDate { get; set; }
-        public DateTime DueDate { get; set; }
+        public DateTime? StartDate { get; set; }
+        public DateTime? DueDate { get; set; }
 
         [Required]
         public DateTime CreationDate { get; set; }

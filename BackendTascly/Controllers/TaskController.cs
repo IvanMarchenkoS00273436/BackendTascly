@@ -4,6 +4,7 @@ using BackendTascly.Data.ModelsDto.TaskDtos;
 using BackendTascly.Entities;
 using BackendTascly.Services;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
 
@@ -54,6 +55,31 @@ namespace BackendTascly.Controllers
             var result = await taskService.CreateTaskAsync(taskEntity, userId, projectId);
             if (!result) return BadRequest("Failed to create Task.");
             return Ok("Task created successfully.");
+        }
+
+        [HttpPatch("{taskId}")]
+        public async Task<ActionResult> UpdateTask(
+            [FromBody] JsonPatchDocument<UpdateTaskDto> jsonPatch, Guid taskId
+            )
+        {
+            var task = await taskService.GetTaskById(taskId); // get existing task for update
+
+            if (task is null) return NotFound();
+
+            var updateTaskDto = mapper.Map<UpdateTaskDto>(task); // extract updateTaskDto from existing task
+
+            jsonPatch.ApplyTo(updateTaskDto, ModelState); //apply JsonPatchDocument<UpdateTaskDto> changes to updateTaskDto
+
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            var updatedTask = mapper.Map(updateTaskDto, task); // update task with data from updateTaskDto
+
+            var userId = Guid.Parse(User.FindFirstValue("UserId")!);
+
+            var result = await taskService.UpdateTaskAsync(taskId, updatedTask, userId);
+            if (!result) return BadRequest("Failed to update Task.");
+            return Ok("Task updated successfully.");
         }
     }
 }

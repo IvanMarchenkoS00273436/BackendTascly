@@ -1,7 +1,9 @@
 ﻿using AutoMapper;
+using Azure;
 using BackendTascly.Data.ModelsDto.ProjectsDtos;
 using BackendTascly.Data.ModelsDto.TaskDtos;
 using BackendTascly.Entities;
+using Microsoft.AspNetCore.JsonPatch;
 
 namespace BackendTascly.Profiles
 {
@@ -34,6 +36,30 @@ namespace BackendTascly.Profiles
                 .ForMember(dest => dest.StatusId, src => src.MapFrom(x => x.StatusId))
                 .ForMember(dest => dest.ImportanceId, src => src.MapFrom(x => x.ImportanceId))
                 .ForMember(dest => dest.AssigneeId, src => src.MapFrom(x => x.AssigneeId));
+
+            // Mapping between UpdateTaskDto DTO and PTask (PTask from UpdateTaskDto)
+            CreateMap<UpdateTaskDto, PTask>()
+                .ForMember(dest => dest.Name, src => src.MapFrom(x => x.Name))
+                .ForMember(dest => dest.Description, src => src.MapFrom(x => x.Description))
+                .ForMember(dest => dest.StartDate, src => src.MapFrom(x => x.StartDate))
+                .ForMember(dest => dest.DueDate, src => src.MapFrom(x => x.DueDate))
+                .ForMember(dest => dest.StatusId, src => src.MapFrom(x => x.StatusId))
+                .ForMember(dest => dest.ImportanceId, src => src.MapFrom(x => x.ImportanceId))
+                .ForMember(dest => dest.AssigneeId, src => src.MapFrom(x => x.AssigneeId));
+
+            // Mapping between PTask DTO and UpdateTaskDto (UpdateTaskDto from PTask)
+            CreateMap<PTask, UpdateTaskDto>()
+                .ForMember(dest => dest.Name, src => src.MapFrom(x => x.Name))
+                .ForMember(dest => dest.Description, src => src.MapFrom(x => x.Description))
+                .ForMember(dest => dest.StartDate, src => src.MapFrom(x => x.StartDate))
+                .ForMember(dest => dest.DueDate, src => src.MapFrom(x => x.DueDate))
+                .ForMember(dest => dest.StatusId, src => src.MapFrom(x => x.StatusId))
+                .ForMember(dest => dest.ImportanceId, src => src.MapFrom(x => x.ImportanceId))
+                .ForMember(dest => dest.AssigneeId, src => src.MapFrom(x => x.AssigneeId));
+
+
+            CreateMap(typeof(JsonPatchDocument<>), typeof(JsonPatchDocument<>));
+            CreateMap(typeof(Operation<>), typeof(Operation<>));
         }
     }
 }

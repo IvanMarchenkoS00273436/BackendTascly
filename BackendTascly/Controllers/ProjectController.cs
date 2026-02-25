@@ -66,9 +66,9 @@ namespace BackendTascly.Controllers
         [HttpGet("{projectId}/Importances")]
         public async Task<ActionResult> GetProjectImportances(Guid projectId)
         {
-            var statuses = await projectService.GetProjectImportances(projectId);
+            var importances = await projectService.GetProjectImportances(projectId);
 
-            return Ok(statuses);
+            return Ok(importances);
         }
     }
 }

@@ -41,5 +41,16 @@ namespace BackendTascly.Repositories
             var affected = await context.SaveChangesAsync();
             return affected > 0; 
         }
+
+        public async Task<bool> UpdateTaskAsync(PTask task)
+        {
+            var existingTask = await context.Tasks.FirstOrDefaultAsync(t => t.Id == task.Id);
+
+            if (existingTask is null) return false;
+
+            //if submitted task exists - SaveChanges will update any changed properties 
+            await context.SaveChangesAsync(); 
+            return true;
+        }
     }
 }
