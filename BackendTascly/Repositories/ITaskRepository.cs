@@ -8,6 +8,7 @@ namespace BackendTascly.Repositories
         Task<PTask?> GetTaskById(Guid taskId);
         Task<List<PTask>> GetTasksByAssigneeId(Guid assigneeId);
         Task<bool> AddTaskAsync(PTask taskEntity);
+        Task<bool> AddTaskAsync(List<PTask> tasks);
         Task<bool> UpdateTaskAsync(PTask taskEntity);
     }
 }

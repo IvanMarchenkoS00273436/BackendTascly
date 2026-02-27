@@ -42,6 +42,14 @@ namespace BackendTascly.Repositories
             return affected > 0; 
         }
 
+        public async Task<bool> AddTaskAsync(List<PTask> tasks)
+        {
+            if (tasks is null || tasks.Count == 0) return false;
+            context.Tasks.AddRange(tasks);
+            var affected = await context.SaveChangesAsync();
+            return affected > 0;
+        }
+
         public async Task<bool> UpdateTaskAsync(PTask task)
         {
             var existingTask = await context.Tasks.FirstOrDefaultAsync(t => t.Id == task.Id);
