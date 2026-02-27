@@ -2,5 +2,6 @@
 {
     public class AiGenerateResponse
     {
+        public List<AiTaskDto> Tasks { get; set; } = new();
     }
 }
