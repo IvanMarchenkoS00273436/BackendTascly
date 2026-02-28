@@ -81,5 +81,13 @@ namespace BackendTascly.Controllers
             if (!result) return BadRequest("Failed to update Task.");
             return Ok("Task updated successfully.");
         }
+
+        [HttpDelete("{taskId}")]
+        public async Task<ActionResult> DeleteTask(Guid taskId)
+        {
+            var result = await taskService.DeleteTaskAsync(taskId);
+            if (!result) return NotFound("Task not found.");
+            return Ok("Task deleted successfully.");
+        }
     }
 }
