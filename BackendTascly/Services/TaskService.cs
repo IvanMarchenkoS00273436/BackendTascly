@@ -27,12 +27,17 @@ namespace BackendTascly.Services
             taskEntity.CreationDate = DateTime.Now;
             taskEntity.LastModifiedDate = DateTime.Now;
 
-            return await taskRepository.UpdateTaskAsync(taskEntity);
+            return await taskRepository.AddTaskAsync(taskEntity);
         }
 
         public async Task<bool> UpdateTaskAsync(Guid taskId, PTask taskEntity, Guid userId)
         {
             return await taskRepository.UpdateTaskAsync(taskEntity);
+        }
+
+        public async Task<bool> DeleteTaskAsync(Guid taskId)
+        {
+            return await taskRepository.DeleteTaskAsync(taskId);
         }
     }
 }

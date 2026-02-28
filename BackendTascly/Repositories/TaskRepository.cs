@@ -60,5 +60,14 @@ namespace BackendTascly.Repositories
             await context.SaveChangesAsync(); 
             return true;
         }
+
+        public async Task<bool> DeleteTaskAsync(Guid taskId)
+        {
+            var task = await context.Tasks.FirstOrDefaultAsync(t => t.Id == taskId);
+            if (task is null) return false;
+            context.Tasks.Remove(task);
+            var affected = await context.SaveChangesAsync();
+            return affected > 0;
+        }
     }
 }

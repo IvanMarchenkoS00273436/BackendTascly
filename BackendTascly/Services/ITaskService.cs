@@ -10,5 +10,6 @@ namespace BackendTascly.Services
         Task<PTask?> GetTaskById(Guid taskId);
         Task<bool> CreateTaskAsync(PTask taskEntity, Guid userId, Guid projectId);
         Task<bool> UpdateTaskAsync(Guid taskId, PTask taskEntity, Guid userId);
+        Task<bool> DeleteTaskAsync(Guid taskId);
     }
 }
