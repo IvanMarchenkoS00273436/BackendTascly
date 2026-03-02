@@ -16,7 +16,7 @@ namespace BackendTascly.BusinessLayer
                 Members = organization.Members.Select(m => new GetUserDto()
                 {
                     UserId = Guid.Parse(m.Id.ToString()),
-                    Username = m.Username,
+                    UserName = m.Username,
                     FirstName = m.FirstName,
                     LastName = m.LastName,
                     IsSuperAdmin = m.IsSuperAdmin,
