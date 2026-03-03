@@ -23,6 +23,9 @@ namespace BackendTascly.Entities
         [Required]
         public bool IsSuperAdmin { get; set; } = false;
 
+        // Can be granted to multiple users by the SuperAdmin via invite
+        public bool IsOrgAdmin { get; set; } = false;
+
         public string? RefreshToken { get; set; }
         public DateTime? RefreshTokenExpiryTime { get; set; }
 

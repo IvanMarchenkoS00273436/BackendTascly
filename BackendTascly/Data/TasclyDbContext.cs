@@ -17,6 +17,7 @@ namespace BackendTascly.Data
         public DbSet<PTask> Tasks { get; set; }
         public DbSet<PTaskStatus> TaskStatuses { get; set; }
         public DbSet<TaskImportance> TaskImportances { get; set; }
+        public DbSet<Invitation> Invitations { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -28,6 +29,12 @@ namespace BackendTascly.Data
                 .HasOne(u => u.Organization)
                 .WithMany(u => u.Members)
                 .OnDelete(DeleteBehavior.NoAction);
+
+            modelBuilder.Entity<Invitation>()
+                .HasOne(i => i.Organization)
+                .WithMany()
+                .HasForeignKey(i => i.OrganizationId)
+                .OnDelete(DeleteBehavior.Cascade);
 
             // NEW: Configure Many-to-Many via WorkspaceUserRole
             modelBuilder.Entity<User>()
