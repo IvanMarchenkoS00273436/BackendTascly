@@ -6,7 +6,7 @@ namespace BackendTascly.Entities
     public class Invitation
     {
         [Key]
-        public Guid Id { get; set; } = Guid.NewGuid(); // This is the invite token
+        public Guid Id { get; set; } = Guid.NewGuid(); 
 
         [Required, EmailAddress]
         public string Email { get; set; } = string.Empty;
