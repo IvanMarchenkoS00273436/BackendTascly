@@ -1,0 +1,73 @@
+﻿using BackendTascly.Data;
+using BackendTascly.Entities;
+using Microsoft.EntityFrameworkCore;
+
+namespace BackendTascly.Repositories
+{
+    public class TaskRepository(TasclyDbContext context) : ITaskRepository
+    {
+        public async Task<List<PTask>> GetTasksByProjectId(Guid projectId)
+        {
+            return await context.Tasks
+                            .Include(t => t.Status)
+                            .Include(t => t.Importance)
+                            .Where(t => t.ProjectId == projectId)
+                            .ToListAsync();
+        }
+
+        public async Task<PTask?> GetTaskById(Guid taskId)
+        {
+            return await context.Tasks
+                            .Include(t => t.Status)
+                            .Include(t => t.Importance)
+                            .FirstOrDefaultAsync(t => t.Id == taskId);
+        }
+
+        public async Task<List<PTask>> GetTasksByAssigneeId(Guid assigneeId)
+        {
+            return await context.Tasks
+                            .Include(t => t.Status)
+                            .Include(t => t.Importance)
+                            .Where(t => t.AssigneeId == assigneeId)
+                            .ToListAsync();
+        }
+
+        public async Task<bool> AddTaskAsync(PTask task)
+        {
+            if (task is null) return false;
+
+            context.Tasks.Add(task);
+
+            var affected = await context.SaveChangesAsync();
+            return affected > 0; 
+        }
+
+        public async Task<bool> AddTaskAsync(List<PTask> tasks)
+        {
+            if (tasks is null || tasks.Count == 0) return false;
+            context.Tasks.AddRange(tasks);
+            var affected = await context.SaveChangesAsync();
+            return affected > 0;
+        }
+
+        public async Task<bool> UpdateTaskAsync(PTask task)
+        {
+            var existingTask = await context.Tasks.FirstOrDefaultAsync(t => t.Id == task.Id);
+
+            if (existingTask is null) return false;
+
+            //if submitted task exists - SaveChanges will update any changed properties 
+            await context.SaveChangesAsync(); 
+            return true;
+        }
+
+        public async Task<bool> DeleteTaskAsync(Guid taskId)
+        {
+            var task = await context.Tasks.FirstOrDefaultAsync(t => t.Id == taskId);
+            if (task is null) return false;
+            context.Tasks.Remove(task);
+            var affected = await context.SaveChangesAsync();
+            return affected > 0;
+        }
+    }
+}
