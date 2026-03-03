@@ -68,5 +68,16 @@ namespace BackendTascly.Services
         {
             return await workspaceRepository.GetWorkspaceMembers(workspaceId);
         }
+
+        public async Task<bool> DeleteUserFromWorkspace(Guid workspaceId, Guid userId)
+        {
+            return await workspaceRepository.DeleteUserFromWorkspace(workspaceId, userId);
+        }
+
+        public async Task<bool> UpdateWorkspaceMemberRole(Guid workspaceId, PutMemberWithNewRoleDto putMemberWithNewRoleDto)
+        {
+            var result = await workspaceRepository.UpdateUserRoleInWorkspace(workspaceId, putMemberWithNewRoleDto.UserId, putMemberWithNewRoleDto.NewRoleId);
+            return result;
+        }
     }
 }

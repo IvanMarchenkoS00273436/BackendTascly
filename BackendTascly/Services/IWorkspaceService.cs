@@ -11,5 +11,7 @@ namespace BackendTascly.Services
         Task<Workspace?> GetWorkspaceByIdAsync(Guid workspaceId);
         Task<bool> AddMemberToWorkspaceAsync(PostMemberToWorkspaceDto req, Guid userId, Guid workspaceId);
         Task<List<WorkspaceUserRole>> GetWorkspaceMembers(Guid workspaceId);
+        Task<bool> DeleteUserFromWorkspace(Guid workspaceId, Guid userId);
+        Task<bool> UpdateWorkspaceMemberRole(Guid workspaceId, PutMemberWithNewRoleDto putMemberWithNewRoleDto);
     }
 }

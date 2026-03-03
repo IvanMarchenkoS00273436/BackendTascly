@@ -82,7 +82,21 @@ namespace BackendTascly.Controllers
             return Ok(membersRoles);
         }
 
+        [HttpDelete("{workspaceId:guid}/Members/{userId:guid}")]
+        public async Task<ActionResult> DeleteMemberFromWorkspace(Guid workspaceId, Guid userId)
+        {
+            bool result = await workspaceService.DeleteUserFromWorkspace(workspaceId, userId);
+            if (!result) return BadRequest("Failed to delete member from the workspace.");
+            return Ok(result);
+        }
 
+        [HttpPut("{workspaceId:guid}/Members/Role")]
+        public async Task<ActionResult> UpdateWorkspaceMemberRole(Guid workspaceId, [FromBody] PutMemberWithNewRoleDto putMemberWithNewRoleDto)
+        {
+            bool result = await workspaceService.UpdateWorkspaceMemberRole(workspaceId, putMemberWithNewRoleDto);
+            if (!result) return BadRequest("Failed to update member's role in the workspace.");
+            return Ok(result);
+        }
 
     }
 }

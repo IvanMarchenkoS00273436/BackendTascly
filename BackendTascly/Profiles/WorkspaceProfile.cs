@@ -18,7 +18,7 @@ namespace BackendTascly.Profiles
             // Mapping between WorkspaceUserRole and GetMemberRoleDto (GetMemberRoleDto from WorkspaceUserRole)
             CreateMap<WorkspaceUserRole, GetMemberRoleDto>()
                 .ForMember(dest => dest.MemberId, src => src.MapFrom(x => x.UserId))
-                .ForMember(dest => dest.Username, src => src.MapFrom(x => x.User.Username))
+                .ForMember(dest => dest.UserName, src => src.MapFrom(x => x.User.Username))
                 .ForMember(dest => dest.FirstName, src => src.MapFrom(x => x.User.FirstName))
                 .ForMember(dest => dest.LastName, src => src.MapFrom(x => x.User.LastName))
                 .ForMember(dest => dest.Role, src => src.MapFrom(x => x.Role));

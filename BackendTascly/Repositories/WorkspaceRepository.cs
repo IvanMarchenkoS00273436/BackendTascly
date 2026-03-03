@@ -48,5 +48,33 @@ namespace BackendTascly.Repositories
                                         .ToListAsync();
             return workspaceUserRoles;
         }
+
+        public async Task<bool> DeleteUserFromWorkspace(Guid workspaceId, Guid userId)
+        {
+            var workspaceUserRole = await context.WorkspaceUserRoles.FirstOrDefaultAsync(wur => wur.WorkspaceId == workspaceId && wur.UserId == userId);
+
+            if(workspaceUserRole is null) 
+                return false;
+            else
+            {
+                context.WorkspaceUserRoles.Remove(workspaceUserRole);
+                await context.SaveChangesAsync();
+                return true;
+            }
+        }
+
+        public async Task<bool> UpdateUserRoleInWorkspace(Guid workspaceId, Guid userId, Guid newRoleId)
+        {
+            var workspaceUserRole = await context.WorkspaceUserRoles.Where(wur => wur.UserId == userId).FirstOrDefaultAsync();
+            if (workspaceUserRole is null) 
+                return false;
+            else
+            {
+                workspaceUserRole.RoleId = newRoleId;
+                context.WorkspaceUserRoles.Update(workspaceUserRole);
+                await context.SaveChangesAsync();
+                return true;
+            }
+        }
     }
 }
