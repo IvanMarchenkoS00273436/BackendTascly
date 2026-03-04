@@ -47,9 +47,25 @@ namespace BackendTascly.Repositories
                 .ToListAsync();
         }
 
+        public async Task<PTaskStatus> GetProjectLastStatus(Guid projectId)
+        {
+            // last status in a project has NextStatusId with a value of NULL
+            return await context.TaskStatuses.Where(ts => ts.ProjectId == projectId).FirstAsync(ts => ts.NextStatusId == null);
+        }
+
         public async Task<List<TaskImportance>> GetProjectImportances(Guid projectId)
         {
             return await context.TaskImportances.Where(ts => ts.ProjectId == projectId).ToListAsync();
+        }
+
+        public async Task<bool> CreateProjectStatus(PTaskStatus taskStatus)
+        {
+            if (taskStatus is null) return false;
+
+            context.TaskStatuses.Add(taskStatus);
+
+            var affected = await context.SaveChangesAsync();
+            return affected > 0; // >0 means at least one entity row was written.
         }
     }
 }

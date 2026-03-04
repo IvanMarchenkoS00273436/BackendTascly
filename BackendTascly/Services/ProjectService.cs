@@ -49,5 +49,23 @@ namespace BackendTascly.Services
         {
             return await projectsRepository.GetProjectImportances(projectId);
         }
+
+        public async Task<bool> CreateProjectStatus(Guid projectId, string statusName)
+        {
+
+            var project = await projectsRepository.GetProjectById(projectId);
+            if (project is null) return false;
+            
+            //create new status
+            var newStatus = new PTaskStatus() { Name = statusName, Project = project, NextStatusId = null };
+
+            //retrieve last status
+            var lastStatus = await projectsRepository.GetProjectLastStatus(projectId);
+            // update NextStatus of the last status to contain reference to a new status
+            lastStatus.NextStatus = newStatus;
+
+            return await projectsRepository.CreateProjectStatus(newStatus);
+
+        }
     }
 }

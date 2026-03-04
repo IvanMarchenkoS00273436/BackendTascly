@@ -66,6 +66,16 @@ namespace BackendTascly.Controllers
             return Ok(statusesDto);
         }
 
+        [HttpPost("{projectId}/Statuses")]
+        public async Task<ActionResult> CreateProjectStatus(Guid projectId, PostStatusDto postStatus)
+        {
+            var userId = Guid.Parse(User.FindFirstValue("UserId")!);
+            var result = await projectService.CreateProjectStatus(projectId, postStatus.StatusName);
+            if (!result) return BadRequest("Failed to create status.");
+            return Ok("Status created successfully.");
+
+        }
+
         [HttpGet("{projectId}/Importances")]
         public async Task<ActionResult> GetProjectImportances(Guid projectId)
         {

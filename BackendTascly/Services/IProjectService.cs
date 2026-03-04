@@ -10,5 +10,6 @@ namespace BackendTascly.Services
         Task<List<Project>> GetProjectsByWorkspaceId(Guid workspaceId);
         Task<List<PTaskStatus>> GetProjectStatuses(Guid projectId);
         Task<List<TaskImportance>> GetProjectImportances(Guid projectId);
+        Task<bool> CreateProjectStatus(Guid projectId, string statusName);
     }
 }
