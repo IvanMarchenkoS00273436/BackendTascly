@@ -41,7 +41,10 @@ namespace BackendTascly.Repositories
 
         public async Task<List<PTaskStatus>> GetProjectStatuses(Guid projectId)
         {
-            return await context.TaskStatuses.Where(ts => ts.ProjectId == projectId).ToListAsync();
+            return await context.TaskStatuses
+                .Where(ts => ts.ProjectId == projectId)
+                .OrderByDescending(ts => ts.NextStatusId.HasValue).ThenBy(ts => ts.NextStatusId)
+                .ToListAsync();
         }
 
         public async Task<List<TaskImportance>> GetProjectImportances(Guid projectId)

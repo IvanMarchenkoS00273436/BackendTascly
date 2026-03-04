@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using BackendTascly.Data.ModelsDto.ProjectsDtos;
+using BackendTascly.Data.ModelsDto.ProjectsDtos.StatusesDto;
 using BackendTascly.Data.ModelsDto.UsersDtos;
 using BackendTascly.Entities;
 using BackendTascly.Services;
@@ -60,7 +61,9 @@ namespace BackendTascly.Controllers
         {
             var statuses = await projectService.GetProjectStatuses(projectId);
 
-            return Ok(statuses);
+            var statusesDto = mapper.Map<List<GetStatusDto>>(statuses);
+
+            return Ok(statusesDto);
         }
 
         [HttpGet("{projectId}/Importances")]

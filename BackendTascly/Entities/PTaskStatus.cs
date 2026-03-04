@@ -11,6 +11,10 @@ namespace BackendTascly.Entities
         [Required]
         [StringLength(100)]
         public string Name { get; set; } = string.Empty;
+        
+        public Int16? NextStatusId { get; set; }
+        [ForeignKey("NextStatusId")]
+        public virtual PTaskStatus? NextStatus { get; set; }
 
         [Required]
         public Guid ProjectId { get; set; }

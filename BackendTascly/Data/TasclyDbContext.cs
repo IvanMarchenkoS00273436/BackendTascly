@@ -128,19 +128,28 @@ namespace BackendTascly.Data
             }, cancellationToken);
             await SaveChangesAsync(cancellationToken);
 
-            // Task Statuses (IDENTITY: do NOT set Id values explicitly)
-            var statusesToAdd = new[]
+            // Task Statuses
+
+            var p1s4 = new PTaskStatus { Id = 4, Name = "Done", ProjectId = projectId1, NextStatus = null };
+            var p1s3 = new PTaskStatus { Id = 3, Name = "In Progress", ProjectId = projectId1, NextStatus = p1s4 };
+            var p1s2 = new PTaskStatus { Id = 2, Name = "To Do", ProjectId = projectId1, NextStatus = p1s3 };
+            var p1s1 = new PTaskStatus { Id = 1, Name = "Backlog", ProjectId = projectId1, NextStatus = p1s2 };
+
+            var p2s3 = new PTaskStatus { Id = 7, Name = "Done", ProjectId = projectId2, NextStatus = null };
+            var p2s2 = new PTaskStatus { Id = 6, Name = "In Progress", ProjectId = projectId2, NextStatus = p2s3 };
+            var p2s1 = new PTaskStatus { Id = 5, Name = "To Do", ProjectId = projectId2, NextStatus = p2s2 };
+
+            var statusesToAdd = new List<PTaskStatus>();
+            statusesToAdd.AddRange(p1s1, p1s2, p1s3, p1s4, p2s1, p2s2, p2s3);            
+            
+            using (var transaction = Database.BeginTransaction())
             {
-                new PTaskStatus { Name = "Backlog",        ProjectId = projectId1 },
-                new PTaskStatus { Name = "To Do",        ProjectId = projectId1 },
-                new PTaskStatus { Name = "In Progress",  ProjectId = projectId1 },
-                new PTaskStatus { Name = "Done",         ProjectId = projectId1 },
-                new PTaskStatus { Name = "To Do",        ProjectId = projectId2 },
-                new PTaskStatus { Name = "In Progress",  ProjectId = projectId2 },
-                new PTaskStatus { Name = "Done",         ProjectId = projectId2 }
-            };
-            await TaskStatuses.AddRangeAsync(statusesToAdd, cancellationToken);
-            await SaveChangesAsync(cancellationToken);
+                Database.ExecuteSql($"SET IDENTITY_INSERT [dbo].[TaskStatuses] ON;");
+                await TaskStatuses.AddRangeAsync(statusesToAdd, cancellationToken);
+                await SaveChangesAsync(cancellationToken);
+                Database.ExecuteSql($"SET IDENTITY_INSERT [dbo].[TaskStatuses] OFF");
+                transaction.Commit();
+            }
 
             // Task Importances (IDENTITY: do NOT set Id values explicitly)
             var importancesToAdd = new[]
