@@ -8,6 +8,6 @@
         public DateTime StartDate { get; set; }
         public short ImportanceId { get; set; }
         public short StatusId { get; set; }
-        public Guid? AssigneeId { get; set; }
+        public string? AssigneeId { get; set; } // Kept as string for safe AI JSON deserialization
     }
 }

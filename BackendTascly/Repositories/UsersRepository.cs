@@ -24,6 +24,14 @@ namespace BackendTascly.Repositories
             return user;
         }
 
+        public async Task<User?> FindByUserNameWithRolesAsync(string username)
+        {
+            return await context.Users
+                .Include(u => u.WorkspaceUserRoles)
+                    .ThenInclude(wur => wur.Role)
+                .FirstOrDefaultAsync(u => u.Username == username);
+        }
+
         public async Task SaveChangesAsync()
         {
             await context.SaveChangesAsync();
