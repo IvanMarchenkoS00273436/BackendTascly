@@ -48,6 +48,15 @@ namespace BackendTascly.Controllers
         }
 
 
+        [HttpPost("register-with-invite")]
+        [AllowAnonymous]
+        public async Task<ActionResult> RegisterWithInvite(RegisterWithInviteDto request)
+        {
+            var result = await authService.RegisterWithInviteAsync(request);
+            if (!result.success) return BadRequest(result.message);
+            return Ok("Account created successfully. Please log in.");
+        }
+
         [Authorize]
         [HttpGet]
         public IActionResult AuthenticatedOnlyEndpoint()

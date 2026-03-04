@@ -1,0 +1,239 @@
+﻿using BackendTascly.Entities;
+using Microsoft.EntityFrameworkCore;
+using System.Drawing;
+
+namespace BackendTascly.Data
+{
+    public class TasclyDbContext(DbContextOptions<TasclyDbContext> options) : DbContext(options)
+    {
+
+
+        public DbSet<Organization> Organizations { get; set; }
+        public DbSet<Workspace> Workspaces { get; set; }
+        public DbSet<User> Users { get; set; }
+        public DbSet<Role> Roles { get; set; }
+        public DbSet<WorkspaceUserRole> WorkspaceUserRoles { get; set; }
+        public DbSet<Project> Projects { get; set; }
+        public DbSet<PTask> Tasks { get; set; }
+        public DbSet<PTaskStatus> TaskStatuses { get; set; }
+        public DbSet<TaskImportance> TaskImportances { get; set; }
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+
+            //modelBuilder.Entity<Workspace>()
+            //    .HasOne(u => u.Owner);
+
+            modelBuilder.Entity<User>()
+                .HasOne(u => u.Organization)
+                .WithMany(u => u.Members)
+                .OnDelete(DeleteBehavior.NoAction);
+
+            // NEW: Configure Many-to-Many via WorkspaceUserRole
+            modelBuilder.Entity<User>()
+                .HasMany(u => u.Workspaces)
+                .WithMany(w => w.Members)
+                .UsingEntity<WorkspaceUserRole>(
+                    l => l.HasOne(ur => ur.Workspace)
+                        .WithMany(w => w.WorkspaceUserRoles)
+                        .HasForeignKey(ur => ur.WorkspaceId),
+                    r => r.HasOne(ur => ur.User)
+                        .WithMany(u => u.WorkspaceUserRoles)
+                        .HasForeignKey(ur => ur.UserId),
+                    j =>
+                    {
+                        j.HasKey(t => new { t.WorkspaceId, t.UserId });
+                    });
+        }
+
+        
+        public async Task SeedDataAsync(CancellationToken cancellationToken = default)
+        {
+            // If any users exist we assume seeding done
+            if (await Users.AnyAsync(cancellationToken))
+                return;
+
+            // Fixed IDs (non-identity tables)
+            var organizationId1 = Guid.Parse("f8353cae-20ba-44f9-8b8d-99906e8b4319");
+
+            var workspaceId1 = Guid.Parse("92d512e7-9799-4468-a3ea-dbffcc345548");
+            var workspaceId2 = Guid.Parse("7af34d3b-3697-4724-851c-9055332d6ee3");
+
+            var userId1 = Guid.Parse("11111111-1111-1111-1111-111111111111");
+            var userId2 = Guid.Parse("22222222-2222-2222-2222-222222222222");
+            var userId3 = Guid.Parse("33333333-3333-3333-3333-333333333333");
+            var userId4 = Guid.Parse("44444444-4444-4444-4444-444444444444");
+
+            var projectId1 = Guid.Parse("aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa");
+            var projectId2 = Guid.Parse("bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb");
+
+            var roleId1 = Guid.Parse("dddddddd-dddd-dddd-dddd-dddddddddddd");
+            var roleId2 = Guid.Parse("eeeeeeee-eeee-eeee-eeee-eeeeeeeeeeee");
+            var roleId3 = Guid.Parse("ffffffff-ffff-ffff-ffff-ffffffffffff");
+            var roleId4 = Guid.Parse("11111111-2222-3333-4444-555555555555");
+
+            var now = new DateTime(2026, 01, 30, 12, 0, 0, DateTimeKind.Utc);
+
+            // Organizations
+            await Organizations.AddAsync(
+                new Organization { Id = organizationId1, Name = "ATU Sligo" },
+                cancellationToken
+                );
+            await SaveChangesAsync(cancellationToken);
+
+            // Users
+            await Users.AddRangeAsync(new[]
+            {
+                new User { Id = userId1, Username = "S00273436@atu.ie", FirstName = "Ivan", LastName = "Marchenko",   PasswordHash = "AQAAAAIAAYagAAAAEMnll0s4CTJiYJO9ttu2C1xo46oQg+lt/Tort4O/L85sA+zgk2R5UM0TtxYBt+oL9g==",IsSuperAdmin = true, OrganizationId = organizationId1 },
+                new User { Id = userId2, Username = "S00274217@atu.ie", FirstName = "Oleksandr", LastName = "Keshel", PasswordHash = "AQAAAAIAAYagAAAAEHp2XuzjGRg7jHQWRVUPaa5VuNLd/smiFulgKXhgan20Hc2Df/31AqntrwOSUF2bIA==",IsSuperAdmin = true, OrganizationId = organizationId1 },
+                new User { Id = userId3, Username = "S00236888@atu.ie", FirstName = "Ryan", LastName = "Mc Clelland", PasswordHash = "AQAAAAIAAYagAAAAEFQaJLV3MWxzT/uYItMLFV5thvTKO1vnjXyJFvbNrqOI+SXZiXKucDhdU/zG6cE64A==",IsSuperAdmin = true, OrganizationId = organizationId1 },
+                new User { Id = userId4, Username = "S00299999@atu.ie", FirstName = "Michael", LastName = "Jackson", PasswordHash = "AQAAAAIAAYagAAAAEK9GvY1mAW6iDlutQs2DHs6jzHiBqk2A4PUY4x/4Hl42frL0QR9nQixuKFoYyGDCDQ==", IsSuperAdmin = false, OrganizationId = organizationId1 }
+            }, cancellationToken);
+            await SaveChangesAsync(cancellationToken);
+
+            // Workspaces
+            await Workspaces.AddRangeAsync(new[]
+            {
+                new Workspace { Id = workspaceId1, Name = "IT Department", OrganizationId = organizationId1 },
+                new Workspace { Id = workspaceId2, Name = "Marketing Department", OrganizationId = organizationId1 },
+            }, cancellationToken);
+            await SaveChangesAsync(cancellationToken);
+
+            // Roles
+            await Roles.AddRangeAsync(new[]
+            {
+                new Role { Id = roleId1, Name = "Admin"  },
+                new Role { Id = roleId2, Name = "Full-access",  },
+                new Role { Id = roleId3, Name = "Limited-access", },
+            }, cancellationToken);
+            await SaveChangesAsync(cancellationToken);
+
+            // WorkspaceUserRoles
+            await WorkspaceUserRoles.AddRangeAsync(new[]
+            {
+                new WorkspaceUserRole {WorkspaceId = workspaceId1, UserId = userId1,  RoleId = roleId1,  },
+                new WorkspaceUserRole {WorkspaceId = workspaceId1, UserId = userId2,  RoleId = roleId2,  },
+                new WorkspaceUserRole {WorkspaceId = workspaceId1, UserId = userId3,  RoleId = roleId3,  },
+
+                new WorkspaceUserRole {WorkspaceId = workspaceId2, UserId = userId2,  RoleId = roleId1,  },
+                new WorkspaceUserRole {WorkspaceId = workspaceId2, UserId = userId4,  RoleId = roleId1,  }
+            }, cancellationToken);
+            await SaveChangesAsync(cancellationToken);
+
+            // Projects
+            await Projects.AddRangeAsync(new[]
+            {
+                new Project { Id = projectId1, Name = "Backend Development", Description = "Backend development project for task management system", OwnerId = userId1, WorkspaceId = workspaceId1  },
+                new Project { Id = projectId2, Name = "Public Relations", Description = "Public Relations management for the company", OwnerId = userId2, WorkspaceId = workspaceId2 }
+            }, cancellationToken);
+            await SaveChangesAsync(cancellationToken);
+
+            // Task Statuses (IDENTITY: do NOT set Id values explicitly)
+            var statusesToAdd = new[]
+            {
+                new PTaskStatus { Name = "Backlog",        ProjectId = projectId1 },
+                new PTaskStatus { Name = "To Do",        ProjectId = projectId1 },
+                new PTaskStatus { Name = "In Progress",  ProjectId = projectId1 },
+                new PTaskStatus { Name = "Done",         ProjectId = projectId1 },
+                new PTaskStatus { Name = "To Do",        ProjectId = projectId2 },
+                new PTaskStatus { Name = "In Progress",  ProjectId = projectId2 },
+                new PTaskStatus { Name = "Done",         ProjectId = projectId2 }
+            };
+            await TaskStatuses.AddRangeAsync(statusesToAdd, cancellationToken);
+            await SaveChangesAsync(cancellationToken);
+
+            // Task Importances (IDENTITY: do NOT set Id values explicitly)
+            var importancesToAdd = new[]
+            {
+                new TaskImportance { Name = "Low",    ProjectId = projectId1 },
+                new TaskImportance { Name = "Medium", ProjectId = projectId1 },
+                new TaskImportance { Name = "High",   ProjectId = projectId1 },
+                new TaskImportance { Name = "Low",    ProjectId = projectId2 },
+                new TaskImportance { Name = "Medium", ProjectId = projectId2 },
+                new TaskImportance { Name = "High",   ProjectId = projectId2 }
+            };
+            await TaskImportances.AddRangeAsync(importancesToAdd, cancellationToken);
+            await SaveChangesAsync(cancellationToken);
+
+            // Resolve generated IDs for statuses/importances
+            var statusLookup = TaskStatuses
+                .Where(s => s.ProjectId == projectId1 || s.ProjectId == projectId2)
+                .AsEnumerable()
+                .GroupBy(s => s.ProjectId)
+                .ToDictionary(
+                    g => g.Key,
+                    g => g.ToDictionary(s => s.Name, s => s.Id));
+
+            var importanceLookup = TaskImportances
+                .Where(i => i.ProjectId == projectId1 || i.ProjectId == projectId2)
+                .AsEnumerable()
+                .GroupBy(i => i.ProjectId)
+                .ToDictionary(
+                    g => g.Key,
+                    g => g.ToDictionary(i => i.Name, i => i.Id));
+
+            // Tasks (use resolved short IDs)
+            await Tasks.AddRangeAsync(new[]
+            {
+                new PTask
+                {
+                    Id = Guid.Parse("99999999-1111-1111-1111-111111111111"),
+                    Name = "Setup database",
+                    Description = "Configure and setup the database schema",
+                    ProjectId = projectId1,
+                    StatusId = statusLookup[projectId1]["In Progress"],
+                    ImportanceId = importanceLookup[projectId1]["High"],
+                    StartDate = now.AddDays(-5),
+                    DueDate = now.AddDays(5),
+                    AuthorId = userId1,
+                    CreationDate = now.AddDays(-5),
+                    LastModifiedDate = now
+                },
+                new PTask
+                {
+                    Id = Guid.Parse("99999999-2222-2222-2222-222222222222"),
+                    Name = "Create API endpoints",
+                    Description = "Implement REST API endpoints for task management",
+                    ProjectId = projectId1,
+                    StatusId = statusLookup[projectId1]["To Do"],
+                    ImportanceId = importanceLookup[projectId1]["High"],
+                    StartDate = now,
+                    DueDate = now.AddDays(10),
+                    AuthorId = userId1,
+                    CreationDate = now,
+                    LastModifiedDate = now
+                },
+                new PTask
+                {
+                    Id = Guid.Parse("99999999-3333-3333-3333-333333333333"),
+                    Name = "Prepare press releases",
+                    Description = "Prepare press releases to convey clear messages that are aligned with the ATU Sligo strategy.",
+                    ProjectId = projectId2,
+                    StatusId = statusLookup[projectId2]["To Do"],
+                    ImportanceId = importanceLookup[projectId2]["Medium"],
+                    StartDate = now.AddDays(-3),
+                    DueDate = now.AddDays(7),
+                    AuthorId = userId2,
+                    CreationDate = now.AddDays(-3),
+                    LastModifiedDate = now
+                },
+                new PTask
+                {
+                    Id = Guid.Parse("99999999-4444-4444-4444-444444444444"),
+                    Name = "Implement authentication",
+                    Description = "Add JWT authentication and authorization",
+                    ProjectId = projectId1,
+                    StatusId = statusLookup[projectId1]["Done"],
+                    ImportanceId = importanceLookup[projectId1]["High"],
+                    StartDate = now.AddDays(-10),
+                    DueDate = now.AddDays(-2),
+                    AuthorId = userId1,
+                    CreationDate = now.AddDays(-10),
+                    CompletionDate = now.AddDays(-2),
+                    LastModifiedDate = now.AddDays(-2)
+                }
+            }, cancellationToken);
+            await SaveChangesAsync(cancellationToken);
+        }
+    }
+}

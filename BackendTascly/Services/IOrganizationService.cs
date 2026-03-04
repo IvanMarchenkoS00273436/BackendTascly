@@ -6,5 +6,6 @@ namespace BackendTascly.Services
     {
         public Task<GetOrganizationOverviewDto> GetOrganizationOverview(Guid organizationId);
         public Task<bool> UpdateOrganizationAsync(Guid organizationId, PutOrganization putOrganization);
+        public Task<(bool success, string message)> InviteMemberAsync(Guid organizationId, InviteUserDto dto);
     }
 }

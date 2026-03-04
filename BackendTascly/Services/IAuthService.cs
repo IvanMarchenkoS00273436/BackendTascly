@@ -9,5 +9,6 @@ namespace BackendTascly.Services
         Task<(bool, string)> RegisterAsync(PostUserDto request);
         Task<TokenResponseDto?> LoginAsync(UserDto request);
         Task<TokenResponseDto?> RefreshTokenAsync(RefreshTokenRequestDto request);
+        Task<(bool success, string message)> RegisterWithInviteAsync(RegisterWithInviteDto request);
     }
 }

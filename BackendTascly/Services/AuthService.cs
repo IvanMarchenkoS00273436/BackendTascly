@@ -13,11 +13,14 @@ using BackendTascly.BusinessLayer;
 
 namespace BackendTascly.Services
 {
-    public class AuthService(IUsersRepository usersRepository, IConfiguration configuration) : IAuthService
+    public class AuthService(
+        IUsersRepository usersRepository,
+        IInvitationRepository invitationRepository,
+        IConfiguration configuration) : IAuthService
     {
         public async Task<TokenResponseDto> LoginAsync(UserDto request)
         {
-            var user = await usersRepository.FindByUserNameAsync(request.Username);
+            var user = await usersRepository.FindByUserNameWithRolesAsync(request.Username);
             if (user is null) return null;
 
             if (user.Username != request.Username) return null;
@@ -60,6 +63,35 @@ namespace BackendTascly.Services
             return (true, "User was successfully created");
         }
 
+        public async Task<(bool success, string message)> RegisterWithInviteAsync(RegisterWithInviteDto request)
+        {
+            // Validate the invite token
+            var invitation = await invitationRepository.GetByTokenAsync(request.InviteToken);
+            if (invitation is null) return (false, "Invalid invitation token.");
+            if (invitation.IsUsed) return (false, "This invitation has already been used.");
+            if (invitation.ExpiresAt < DateTime.UtcNow) return (false, "This invitation has expired.");
+
+            // Check email isn't already registered
+            if (await usersRepository.UserExists(request.Username))
+                return (false, "An account with this email already exists.");
+
+            var user = new User();
+            user.PasswordHash = new PasswordHasher<User>().HashPassword(user, request.Password);
+            user.Username = request.Username;
+            user.FirstName = request.FirstName;
+            user.LastName = request.LastName;
+            user.OrganizationId = invitation.OrganizationId;
+            user.IsSuperAdmin = false;
+            user.IsOrgAdmin = invitation.IsOrgAdmin;
+
+            await usersRepository.AddUserAsync(user);
+
+            // Mark invitation as used
+            invitation.IsUsed = true;
+            await invitationRepository.SaveChangesAsync();
+
+            return (true, "Account created successfully.");
+        }
         private async Task<User?> ValidateRefreshTokenAsync(Guid userId, string refreshToken)
         {
             var user = await usersRepository.FindByUserIdAsync(userId);
@@ -73,11 +105,17 @@ namespace BackendTascly.Services
 
         private string CreateToken(User user)
         {
+            var allowedRoles = new[] { "Admin", "Full-access" };
+            var canUseAI = user.IsSuperAdmin || user.IsOrgAdmin
+                || (user.WorkspaceUserRoles?.Any(wur => allowedRoles.Contains(wur.Role?.Name)) ?? false);
+
             var claims = new List<Claim>
             {
                 new Claim("UserId", user.Id.ToString()),
                 new Claim("Username", user.Username),
                 new Claim("IsSuperAdmin", user.IsSuperAdmin.ToString()),
+                new Claim("IsOrgAdmin", user.IsOrgAdmin.ToString()),
+                new Claim("CanUseAI", canUseAI.ToString()),
                 new Claim("OrganizationId", user.OrganizationId.ToString()),
                 new Claim("FirstName", user.FirstName),
                 new Claim("LastName", user.LastName),

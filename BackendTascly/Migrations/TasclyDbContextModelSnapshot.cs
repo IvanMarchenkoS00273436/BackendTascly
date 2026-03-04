@@ -22,6 +22,38 @@ namespace BackendTascly.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
+            modelBuilder.Entity("BackendTascly.Entities.Invitation", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("ExpiresAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsOrgAdmin")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsUsed")
+                        .HasColumnType("bit");
+
+                    b.Property<Guid>("OrganizationId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("OrganizationId");
+
+                    b.ToTable("Invitations");
+                });
+
             modelBuilder.Entity("BackendTascly.Entities.Organization", b =>
                 {
                     b.Property<Guid>("Id")
@@ -202,6 +234,9 @@ namespace BackendTascly.Migrations
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
 
+                    b.Property<bool>("IsOrgAdmin")
+                        .HasColumnType("bit");
+
                     b.Property<bool>("IsSuperAdmin")
                         .HasColumnType("bit");
 
@@ -275,6 +310,17 @@ namespace BackendTascly.Migrations
                     b.HasIndex("UserId");
 
                     b.ToTable("WorkspaceUserRoles");
+                });
+
+            modelBuilder.Entity("BackendTascly.Entities.Invitation", b =>
+                {
+                    b.HasOne("BackendTascly.Entities.Organization", "Organization")
+                        .WithMany()
+                        .HasForeignKey("OrganizationId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Organization");
                 });
 
             modelBuilder.Entity("BackendTascly.Entities.PTask", b =>
