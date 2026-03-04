@@ -65,15 +65,21 @@ namespace BackendTascly.Repositories
 
         public async Task<bool> UpdateUserRoleInWorkspace(Guid workspaceId, Guid userId, Guid newRoleId)
         {
-            var workspaceUserRole = await context.WorkspaceUserRoles.Where(wur => wur.UserId == userId).FirstOrDefaultAsync();
-            if (workspaceUserRole is null) 
-                return false;
-            else
+            try
             {
-                workspaceUserRole.RoleId = newRoleId;
-                context.WorkspaceUserRoles.Update(workspaceUserRole);
-                await context.SaveChangesAsync();
-                return true;
+                var workspaceUserRole = await context.WorkspaceUserRoles.FirstOrDefaultAsync(wur => wur.UserId == userId && wur.WorkspaceId == workspaceId);
+                if (workspaceUserRole is null)
+                    return false;
+                else
+                {
+                    workspaceUserRole.RoleId = newRoleId;
+                    context.WorkspaceUserRoles.Update(workspaceUserRole);
+                    await context.SaveChangesAsync();
+                    return true;
+                }
+            }
+            catch (Exception ex) {
+                return false;
             }
         }
     }

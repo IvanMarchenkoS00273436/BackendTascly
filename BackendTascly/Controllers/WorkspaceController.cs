@@ -94,7 +94,6 @@ namespace BackendTascly.Controllers
         public async Task<ActionResult> UpdateWorkspaceMemberRole(Guid workspaceId, [FromBody] PutMemberWithNewRoleDto putMemberWithNewRoleDto)
         {
             bool result = await workspaceService.UpdateWorkspaceMemberRole(workspaceId, putMemberWithNewRoleDto);
-            if (!result) return BadRequest("Failed to update member's role in the workspace.");
             return Ok(result);
         }
 
