@@ -25,31 +25,21 @@ namespace BackendTascly.Services
             var client = httpClientFactory.CreateClient("Groq");
             client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", apiKey);
 
-            // Build a strict system prompt so the AI always returns parseable json
-            var systemPrompt = $$""" 
-                You are a task managemnet AI assistant working in {{request.Mode}} mode.
-                Your Job is to extract actionable tasks from the user's text.
-                
-                You MUST respond with ONLY valid JSON in this exact format, no other text:
-                {
-                "tasks": [
-                  {
-                   "name"  "Task name (max 100 chars),
-                   "description": "Task description",
-                   "dueDate": "YYYY-MM-DDTHH:mm:ss",
-                   "startDate": "YYYY-MM-DDTHH:mm:ss",
-                   "importanceId": 1,
-                   "statusId": 1,
-                  }
-                 ]
-                }
+            var memberLines = request.Members.Count > 0
+                ? string.Join("\n", request.Members.Select(m =>
+                    $"  - If user mentions \"{m.FullName.Split(' ')[0]}\" or \"{m.FullName}\" → assigneeId = \"{m.Id}\""))
+                : "  - No members. Always use assigneeId: null";
 
-                importanceId: 1=Low, 2=Medium, 3=High
-                statusId: always 1 (pending) for new tasks
-                If no due date is mentiuoned, set dueDate to 7 days from today.
-                If no start date is mentioned, set startDate to today.
-                Today's date is {{DateTime.UtcNow:yyyy-MM-ddTHH:mm:ss}}. 
-                """;
+            var systemPrompt =
+                "You are a task management AI. Extract tasks from the user input and return ONLY JSON.\n\n" +
+                "NAME TO ASSIGNEE LOOKUP (match by first name or full name):\n" +
+                memberLines + "\n\n" +
+                "JSON FORMAT (respond with this exact structure, no extra text):\n" +
+                "{\"tasks\":[{\"name\":\"...\",\"description\":\"...\",\"dueDate\":\"YYYY-MM-DDTHH:mm:ss\",\"startDate\":\"YYYY-MM-DDTHH:mm:ss\",\"importanceId\":1,\"statusId\":1,\"assigneeId\":null}]}\n\n" +
+                "RULES:\n" +
+                "- importanceId: 1=Low 2=Medium 3=High. statusId: always 1.\n" +
+                "- assigneeId: look up the name from the LOOKUP above and use that exact GUID string. If no name mentioned, use JSON null.\n" +
+                "- Default dueDate=" + DateTime.UtcNow.AddDays(7).ToString("yyyy-MM-ddTHH:mm:ss") + " startDate=" + DateTime.UtcNow.ToString("yyyy-MM-ddTHH:mm:ss");
 
             var payload = new
             {
@@ -101,20 +91,24 @@ namespace BackendTascly.Services
                 return false;
 
             var now = DateTime.UtcNow;
-            var tasks = request.Tasks.Select(t => new PTask
+            var tasks = request.Tasks.Select(t =>
             {
-                Id = Guid.NewGuid(),
-                Name = t.Name,
-                Description = t.Description ?? string.Empty,
-                StartDate = t.StartDate == default ? now : t.StartDate,
-                DueDate = t.DueDate == default ? now.AddDays(7) : t.DueDate,
-                CreationDate = now,
-                LastModifiedDate = now,
-                StatusId = t.StatusId == 0 ? (short)1 : t.StatusId, // Default to pending
-                ImportanceId = t.ImportanceId == 0 ? (short)1 : t.ImportanceId, // Default to Low
-                ProjectId = request.ProjectId,
-                AuthorId = userId,
-                AssigneeId = t.AssigneeId
+                Guid? safeAssigneeId = Guid.TryParse(t.AssigneeId, out var parsed) ? parsed : null;
+                return new PTask
+                {
+                    Id = Guid.NewGuid(),
+                    Name = t.Name,
+                    Description = t.Description ?? string.Empty,
+                    StartDate = t.StartDate == default ? now : t.StartDate,
+                    DueDate = t.DueDate == default ? now.AddDays(7) : t.DueDate,
+                    CreationDate = now,
+                    LastModifiedDate = now,
+                    StatusId = t.StatusId == 0 ? (short)1 : t.StatusId,
+                    ImportanceId = t.ImportanceId == 0 ? (short)1 : t.ImportanceId,
+                    ProjectId = request.ProjectId,
+                    AuthorId = userId,
+                    AssigneeId = safeAssigneeId
+                };
             }).ToList();
 
             return await taskRepository.AddTaskAsync(tasks);

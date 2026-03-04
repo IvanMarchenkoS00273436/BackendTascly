@@ -8,6 +8,7 @@ namespace BackendTascly.Repositories
         Task<bool> UserExists(string username);
         Task AddUserAsync(User user);
         Task<User?> FindByUserNameAsync(string username);
+        Task<User?> FindByUserNameWithRolesAsync(string username);
         Task SaveChangesAsync();
         Task<User?> FindByUserIdAsync(Guid userId);
         Task<List<User>> GetAllUsers(Guid organizationId);

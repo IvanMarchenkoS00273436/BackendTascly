@@ -20,7 +20,7 @@ namespace BackendTascly.Services
     {
         public async Task<TokenResponseDto> LoginAsync(UserDto request)
         {
-            var user = await usersRepository.FindByUserNameAsync(request.Username);
+            var user = await usersRepository.FindByUserNameWithRolesAsync(request.Username);
             if (user is null) return null;
 
             if (user.Username != request.Username) return null;
@@ -105,11 +105,17 @@ namespace BackendTascly.Services
 
         private string CreateToken(User user)
         {
+            var allowedRoles = new[] { "Admin", "Full-access" };
+            var canUseAI = user.IsSuperAdmin || user.IsOrgAdmin
+                || (user.WorkspaceUserRoles?.Any(wur => allowedRoles.Contains(wur.Role?.Name)) ?? false);
+
             var claims = new List<Claim>
             {
                 new Claim("UserId", user.Id.ToString()),
                 new Claim("Username", user.Username),
                 new Claim("IsSuperAdmin", user.IsSuperAdmin.ToString()),
+                new Claim("IsOrgAdmin", user.IsOrgAdmin.ToString()),
+                new Claim("CanUseAI", canUseAI.ToString()),
                 new Claim("OrganizationId", user.OrganizationId.ToString()),
                 new Claim("FirstName", user.FirstName),
                 new Claim("LastName", user.LastName),

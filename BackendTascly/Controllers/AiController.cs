@@ -26,8 +26,7 @@ namespace BackendTascly.Controllers
             }
             catch (Exception ex)
             {
-                // Log the exception (not implemented here)
-                return StatusCode(500, new { messages = ex.Message });
+                return StatusCode(500, new { message = ex.Message, detail = ex.ToString() });
             }
         }
 
