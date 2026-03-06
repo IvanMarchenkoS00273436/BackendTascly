@@ -13,5 +13,6 @@ namespace BackendTascly.Data.ModelsDto.OrganizationsDtos
         public int TotalCompletedTasks { get; set; }
         public int TotalToDoTasks { get; set; }
         public int TotalInProgressTasks { get; set; }
+        public int TotalBacklogTasks { get; set; }
     }
 }

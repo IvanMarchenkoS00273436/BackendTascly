@@ -30,8 +30,9 @@ namespace BackendTascly.BusinessLayer
                 }).ToList(),
                 TotalTasks = organization.Workspaces.Sum(w => w.Projects.Sum(p => p.Tasks.Count)),
                 TotalInProgressTasks = organization.Workspaces.Sum(w => w.Projects.Sum(p => p.Tasks.Count(t => t.Status != null && t.Status.Name == "In Progress"))),
-                TotalCompletedTasks = organization.Workspaces.Sum(w => w.Projects.Sum(p => p.Tasks.Count(t => t.Status != null && t.Status.Name == "Completed"))),
-                TotalToDoTasks = organization.Workspaces.Sum(w => w.Projects.Sum(p => p.Tasks.Count(t => t.Status != null && t.Status.Name == "To Do")))
+                TotalCompletedTasks = organization.Workspaces.Sum(w => w.Projects.Sum(p => p.Tasks.Count(t => t.Status != null && t.Status.Name == "Done"))),
+                TotalToDoTasks = organization.Workspaces.Sum(w => w.Projects.Sum(p => p.Tasks.Count(t => t.Status != null && t.Status.Name == "To Do"))),
+                TotalBacklogTasks = organization.Workspaces.Sum(w => w.Projects.Sum(p => p.Tasks.Count(t => t.Status != null && t.Status.Name == "Backlog"))),
             };
 
             return overviewDto;
