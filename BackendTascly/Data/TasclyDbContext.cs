@@ -142,6 +142,7 @@ namespace BackendTascly.Data
                 new PTaskStatus { Name = "To Do",        ProjectId = projectId1 },
                 new PTaskStatus { Name = "In Progress",  ProjectId = projectId1 },
                 new PTaskStatus { Name = "Done",         ProjectId = projectId1 },
+                new PTaskStatus { Name = "Backlog",        ProjectId = projectId2 },
                 new PTaskStatus { Name = "To Do",        ProjectId = projectId2 },
                 new PTaskStatus { Name = "In Progress",  ProjectId = projectId2 },
                 new PTaskStatus { Name = "Done",         ProjectId = projectId2 }
