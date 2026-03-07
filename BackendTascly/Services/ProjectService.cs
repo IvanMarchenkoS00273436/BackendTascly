@@ -11,7 +11,8 @@ namespace BackendTascly.Services
             project.OwnerId = userId; //assign owner to the project
 
             //add default Task Statuses to the project
-            project.TaskStatuses.Add(new PTaskStatus() { Name = "ToDo" });            
+            project.TaskStatuses.Add(new PTaskStatus() { Name = "Backlog" });            
+            project.TaskStatuses.Add(new PTaskStatus() { Name = "ToDo" });
             project.TaskStatuses.Add(new PTaskStatus() { Name = "InProgress" });
             project.TaskStatuses.Add(new PTaskStatus() { Name = "Done" });
 
