@@ -111,5 +111,18 @@ namespace BackendTascly.Controllers
             return Ok(result);
         }
 
+        [HttpGet("{workspaceId:guid}/Members/Role")]
+        public async Task<ActionResult> GetWorkspaceMemberRole(Guid workspaceId)
+        {
+            var userId = Guid.Parse(User.FindFirstValue("UserId")!);
+
+            var role = await workspaceService.GetWorkspaceMemberRole(userId, workspaceId);
+
+            if (role == null)
+                return NotFound();
+
+            return Ok(role);
+        }
+
     }
 }
