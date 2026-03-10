@@ -85,8 +85,10 @@ namespace BackendTascly.Controllers
         [HttpDelete("{taskId}")]
         public async Task<ActionResult> DeleteTask(Guid taskId)
         {
-            var result = await taskService.DeleteTaskAsync(taskId);
-            if (!result) return NotFound("Task not found.");
+            var userId = Guid.Parse(User.FindFirstValue("UserId")!);
+
+            var result = await taskService.DeleteTaskAsync(userId, taskId);
+            if (!result) return NotFound("Task not found. Or it's not possible to delete Task.");
             return Ok("Task deleted successfully.");
         }
     }

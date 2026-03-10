@@ -79,5 +79,11 @@ namespace BackendTascly.Services
             var result = await workspaceRepository.UpdateUserRoleInWorkspace(workspaceId, putMemberWithNewRoleDto.UserId, putMemberWithNewRoleDto.NewRoleId);
             return result;
         }
+
+        public async Task<Role?> GetWorkspaceMemberRole(Guid userId, Guid workspaceId)
+        {
+            var result = await workspaceRepository.GetWorkspaceUserRoleAsync(userId, workspaceId);
+            return result;
+        }
     }
 }

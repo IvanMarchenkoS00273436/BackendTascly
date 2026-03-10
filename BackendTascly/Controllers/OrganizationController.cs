@@ -2,6 +2,7 @@
 using BackendTascly.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
 namespace BackendTascly.Controllers
 {
@@ -21,6 +22,10 @@ namespace BackendTascly.Controllers
         [HttpPut("updateOrganization")]
         public async Task<IActionResult> UpdateOrganization(PutOrganization putOrganization)
         {
+            // authorize User (only SuperAdmins can update Organization info) 
+            _ = bool.TryParse(User.FindFirstValue("IsSuperAdmin"), out bool isSuperAdmin);
+            if (!isSuperAdmin) return Forbid();
+
             var organizationId = Guid.Parse(User.Claims.FirstOrDefault(c => c.Type == "OrganizationId")?.Value);
             var result = await organizationService.UpdateOrganizationAsync(organizationId, putOrganization);
             if (!result) return BadRequest("Failed to update organization.");
@@ -30,10 +35,9 @@ namespace BackendTascly.Controllers
         [HttpPost("invite")]
         public async Task<IActionResult> InviteMember(InviteUserDto dto)
         {
-            var isSuperAdmin = bool.Parse(User.Claims.FirstOrDefault(c => c.Type == "IsSuperAdmin")?.Value ?? "false");
-            var isOrgAdmin = bool.Parse(User.Claims.FirstOrDefault(c => c.Type == "IsOrgAdmin")?.Value ?? "false");
-            if (!isSuperAdmin && !isOrgAdmin)
-                return Forbid();
+            // authorize User (only SuperAdmins can update Organization info) 
+            _ = bool.TryParse(User.FindFirstValue("IsSuperAdmin"), out bool isSuperAdmin);
+            if (!isSuperAdmin) return Forbid();
 
             var organizationId = Guid.Parse(User.Claims.FirstOrDefault(c => c.Type == "OrganizationId")?.Value);
             var result = await organizationService.InviteMemberAsync(organizationId, dto);

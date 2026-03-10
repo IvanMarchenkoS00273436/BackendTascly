@@ -56,20 +56,5 @@ namespace BackendTascly.Controllers
             if (!result.success) return BadRequest(result.message);
             return Ok("Account created successfully. Please log in.");
         }
-
-        [Authorize]
-        [HttpGet]
-        public IActionResult AuthenticatedOnlyEndpoint()
-        {
-            return Ok("You are authenticated!");
-        }
-
-        [Authorize(Roles = "Admin")]
-        [HttpGet("admin-only")]
-        public IActionResult AdminOnlyEndpoint()
-        {
-            return Ok("You are an Admin!");
-        }
-
     }
 }

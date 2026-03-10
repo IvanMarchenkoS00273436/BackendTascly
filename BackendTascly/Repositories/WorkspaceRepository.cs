@@ -63,6 +63,16 @@ namespace BackendTascly.Repositories
             }
         }
 
+        public async Task<Role?> GetWorkspaceUserRoleAsync(Guid userId, Guid workspaceId)
+        {
+            var workspaceUserRole = await context.WorkspaceUserRoles
+                                        .Include(wur=> wur.Role)
+                                        .FirstOrDefaultAsync(wur => wur.UserId == userId && wur.WorkspaceId == workspaceId);
+            if(workspaceUserRole is null) return null;
+
+            return workspaceUserRole.Role;
+        }
+
         public async Task<bool> UpdateUserRoleInWorkspace(Guid workspaceId, Guid userId, Guid newRoleId)
         {
             try
