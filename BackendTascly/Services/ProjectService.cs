@@ -7,10 +7,8 @@ namespace BackendTascly.Services
     {
         public async Task<bool> CreateProjectAsync(Project project, Guid userId, Guid workspaceId)
         {
-            // get user role
+            // only workspace 'Admin' can create Project
             var userRole = await workspaceRepository.GetWorkspaceUserRoleAsync(userId, workspaceId);
-
-            // only workspace 'Admin' can create a Project
             if (userRole is null || userRole.Name != "Admin") return false;
 
             project.WorkspaceId = workspaceId; // project must be created within a Workspace      
@@ -32,8 +30,16 @@ namespace BackendTascly.Services
             return await projectsRepository.AddProjectAsync(project);
         }
 
-        public async Task<bool> DeleteProjectAsync(Guid projectId)
+        public async Task<bool> DeleteProjectAsync(Guid userId, Guid projectId)
         {
+            //get project to delete
+            var project = await projectsRepository.GetProjectById(projectId);
+            if (project is null) return false;
+
+            // only workspace 'Admin' can delete Project
+            var userRole = await workspaceRepository.GetWorkspaceUserRoleAsync(userId, project.WorkspaceId);
+            if (userRole is null || userRole.Name != "Admin") return false;
+
             return await projectsRepository.DeleteProjectAsync(projectId);
         }
 

@@ -50,7 +50,9 @@ namespace BackendTascly.Controllers
         [HttpDelete("{projectId:guid}")]
         public async Task<ActionResult> DeleteProjectAsync(Guid projectId)
         {
-            var result = await projectService.DeleteProjectAsync(projectId);
+            var userId = Guid.Parse(User.FindFirstValue("UserId")!);
+
+            var result = await projectService.DeleteProjectAsync(userId, projectId);
             if (!result) return NotFound("Project not found or could not be deleted.");
             return Ok("Project deleted successfully.");
         }
