@@ -44,8 +44,21 @@ namespace BackendTascly.Services
             return await taskRepository.UpdateTaskAsync(taskEntity);
         }
 
-        public async Task<bool> DeleteTaskAsync(Guid taskId)
+        public async Task<bool> DeleteTaskAsync(Guid userId, Guid taskId)
         {
+            //get an existing task
+            var task = await taskRepository.GetTaskById(taskId);
+            if (task is null) return false;
+
+            //get project
+            var project = await projectsRepository.GetProjectById(task.ProjectId);
+            if (project is null) return false;
+
+            // only workspace 'Admin' or 'Full-access' can update a Task
+            var userRole = await workspaceRepository.GetWorkspaceUserRoleAsync(userId, project.WorkspaceId);
+            if (userRole is null || (userRole.Name != "Admin" && userRole.Name != "Full-access"))
+                return false;
+
             return await taskRepository.DeleteTaskAsync(taskId);
         }
     }
