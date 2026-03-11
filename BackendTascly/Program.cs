@@ -30,7 +30,7 @@ builder.Services.AddControllers().AddNewtonsoftJson();
 //builder.Services.AddOpenApi();
 builder.Services.AddOpenApi("v1", options => { options.AddDocumentTransformer<BearerSecuritySchemeTransformer>(); });
 builder.Services.AddDbContext<TasclyDbContext>(options =>
-    options.UseNpgsql(builder.Configuration.GetConnectionString("TasclyDatabase")));
+    options.UseNpgsql(builder.Configuration["ConnectionStrings:TasclyDatabase"]));
 
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IUsersRepository, UsersRepository>();
