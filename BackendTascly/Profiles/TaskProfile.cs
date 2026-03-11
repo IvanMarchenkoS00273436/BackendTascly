@@ -1,9 +1,9 @@
 ﻿using AutoMapper;
-using Azure;
 using BackendTascly.Data.ModelsDto.ProjectsDtos;
 using BackendTascly.Data.ModelsDto.TaskDtos;
 using BackendTascly.Entities;
 using Microsoft.AspNetCore.JsonPatch;
+using Microsoft.AspNetCore.JsonPatch.Operations;
 
 namespace BackendTascly.Profiles
 {
