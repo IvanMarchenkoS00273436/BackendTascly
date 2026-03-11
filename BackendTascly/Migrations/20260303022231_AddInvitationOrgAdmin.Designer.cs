@@ -4,6 +4,7 @@ using BackendTascly.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace BackendTascly.Migrations
 {
     [DbContext(typeof(TasclyDbContext))]
-    partial class TasclyDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260303022231_AddInvitationOrgAdmin")]
+    partial class AddInvitationOrgAdmin
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -21,6 +24,38 @@ namespace BackendTascly.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
+
+            modelBuilder.Entity("BackendTascly.Entities.Invitation", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("ExpiresAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsOrgAdmin")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsUsed")
+                        .HasColumnType("bit");
+
+                    b.Property<Guid>("OrganizationId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("OrganizationId");
+
+                    b.ToTable("Invitations");
+                });
 
             modelBuilder.Entity("BackendTascly.Entities.Organization", b =>
                 {
@@ -202,6 +237,9 @@ namespace BackendTascly.Migrations
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
 
+                    b.Property<bool>("IsOrgAdmin")
+                        .HasColumnType("bit");
+
                     b.Property<bool>("IsSuperAdmin")
                         .HasColumnType("bit");
 
@@ -275,6 +313,17 @@ namespace BackendTascly.Migrations
                     b.HasIndex("UserId");
 
                     b.ToTable("WorkspaceUserRoles");
+                });
+
+            modelBuilder.Entity("BackendTascly.Entities.Invitation", b =>
+                {
+                    b.HasOne("BackendTascly.Entities.Organization", "Organization")
+                        .WithMany()
+                        .HasForeignKey("OrganizationId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Organization");
                 });
 
             modelBuilder.Entity("BackendTascly.Entities.PTask", b =>
