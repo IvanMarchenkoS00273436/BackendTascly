@@ -15,11 +15,15 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowAll",
-        builder =>
+        CorsBuilder =>
         {
-            builder.WithOrigins("http://localhost:4200")
+            CorsBuilder.WithOrigins("http://localhost:4200")
                    .AllowAnyMethod()
                    .AllowAnyHeader();
+
+            CorsBuilder.WithOrigins(builder.Configuration["AppSettings:FrontendUrl"] ?? "http://localhost:4200")
+                    .AllowAnyHeader()
+                    .AllowAnyMethod();
         });
 });
 
