@@ -29,7 +29,8 @@ builder.Services.AddControllers().AddNewtonsoftJson();
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 //builder.Services.AddOpenApi();
 builder.Services.AddOpenApi("v1", options => { options.AddDocumentTransformer<BearerSecuritySchemeTransformer>(); });
-builder.Services.AddDbContext<TasclyDbContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("TasclyDatabase")));
+builder.Services.AddDbContext<TasclyDbContext>(options =>
+    options.UseNpgsql(builder.Configuration.GetConnectionString("TasclyDatabase")));
 
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IUsersRepository, UsersRepository>();
