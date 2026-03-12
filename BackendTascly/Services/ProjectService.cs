@@ -16,8 +16,8 @@ namespace BackendTascly.Services
 
             //add default Task Statuses to the project
             project.TaskStatuses.Add(new PTaskStatus() { Name = "Backlog" });            
-            project.TaskStatuses.Add(new PTaskStatus() { Name = "ToDo" });
-            project.TaskStatuses.Add(new PTaskStatus() { Name = "InProgress" });
+            project.TaskStatuses.Add(new PTaskStatus() { Name = "To Do" });
+            project.TaskStatuses.Add(new PTaskStatus() { Name = "In Progress" });
             project.TaskStatuses.Add(new PTaskStatus() { Name = "Done" });
 
 
