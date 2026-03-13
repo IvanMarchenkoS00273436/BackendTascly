@@ -6,7 +6,7 @@ namespace BackendTascly.Services
 {
     public class WorkspaceService(IWorkspaceRepository workspaceRepository, IUsersRepository usersRepository, IRoleRepository roleRepository): IWorkspaceService
     {
-        public async Task<bool> CreateWorkspaceAsync(PostWorkspaceDto postWorkspaceDto, Guid userId)
+        public async Task<bool> CreateWorkspaceAsync(Guid userId, PostWorkspaceDto postWorkspaceDto)
         {
             // find user
             var user = await usersRepository.FindByUserIdAsync(userId);
@@ -41,9 +41,11 @@ namespace BackendTascly.Services
 
         public async Task<bool> AddMemberToWorkspaceAsync(PostMemberToWorkspaceDto req, Guid userId, Guid workspaceId)
         {
-            // TODO: check if user who sends the request is Admin within a workspace
+            // only workspace 'Admin' can add new Members
+            var userRole = await workspaceRepository.GetWorkspaceUserRoleAsync(userId, workspaceId);
+            if (userRole is null || userRole.Name != "Admin") return false;
 
-            // find a member
+            // find a member being added to the workspace
             var member = await usersRepository.FindByUserIdAsync(req.MemberId);
             if (member is null) return false;
 
@@ -69,13 +71,21 @@ namespace BackendTascly.Services
             return await workspaceRepository.GetWorkspaceMembers(workspaceId);
         }
 
-        public async Task<bool> DeleteUserFromWorkspace(Guid workspaceId, Guid userId)
+        public async Task<bool> DeleteUserFromWorkspace(Guid userId, Guid workspaceId, Guid memberId)
         {
-            return await workspaceRepository.DeleteUserFromWorkspace(workspaceId, userId);
+            // only workspace 'Admin' can delete Members
+            var userRole = await workspaceRepository.GetWorkspaceUserRoleAsync(userId, workspaceId);
+            if (userRole is null || userRole.Name != "Admin") return false;
+
+            return await workspaceRepository.DeleteUserFromWorkspace(workspaceId, memberId);
         }
 
-        public async Task<bool> UpdateWorkspaceMemberRole(Guid workspaceId, PutMemberWithNewRoleDto putMemberWithNewRoleDto)
+        public async Task<bool> UpdateWorkspaceMemberRole(Guid userId, Guid workspaceId, PutMemberWithNewRoleDto putMemberWithNewRoleDto)
         {
+            // only workspace 'Admin' can delete Members
+            var userRole = await workspaceRepository.GetWorkspaceUserRoleAsync(userId, workspaceId);
+            if (userRole is null || userRole.Name != "Admin") return false;
+
             var result = await workspaceRepository.UpdateUserRoleInWorkspace(workspaceId, putMemberWithNewRoleDto.UserId, putMemberWithNewRoleDto.NewRoleId);
             return result;
         }

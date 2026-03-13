@@ -25,7 +25,7 @@ namespace BackendTascly.Controllers
             if (!isSuperAdmin) return Forbid();
 
             var userId = Guid.Parse(User.FindFirstValue("UserId")!);
-            var result = await workspaceService.CreateWorkspaceAsync(postWorkspaceDto, userId);
+            var result = await workspaceService.CreateWorkspaceAsync(userId, postWorkspaceDto);
             if (!result) return BadRequest("Failed to create workspace.");
             return Ok("Workspace created successfully.");
         }
@@ -64,10 +64,6 @@ namespace BackendTascly.Controllers
         [HttpPost("{id:guid}/Members")]
         public async Task<ActionResult> AddMemberToWorkspace(PostMemberToWorkspaceDto req, Guid id)
         {
-            // authorize User (only SuperAdmins can Add Members to Workspace) 
-            _ = bool.TryParse(User.FindFirstValue("IsSuperAdmin"), out bool isSuperAdmin);
-            if (!isSuperAdmin) return Forbid();
-
             var userId = Guid.Parse(User.FindFirstValue("UserId")!); //who sends the request
             var result = await workspaceService.AddMemberToWorkspaceAsync(req, userId, id);
             if (!result) return BadRequest("Failed to add member to the workspace.");
@@ -88,14 +84,11 @@ namespace BackendTascly.Controllers
             return Ok(membersRoles);
         }
 
-        [HttpDelete("{workspaceId:guid}/Members/{userId:guid}")]
-        public async Task<ActionResult> DeleteMemberFromWorkspace(Guid workspaceId, Guid userId)
+        [HttpDelete("{workspaceId:guid}/Members/{memberId:guid}")]
+        public async Task<ActionResult> DeleteMemberFromWorkspace(Guid workspaceId, Guid memberId)
         {
-            // authorize User (only SuperAdmins can Delete Members from Workspace) 
-            _ = bool.TryParse(User.FindFirstValue("IsSuperAdmin"), out bool isSuperAdmin);
-            if (!isSuperAdmin) return Forbid();
-
-            bool result = await workspaceService.DeleteUserFromWorkspace(workspaceId, userId);
+            var userId = Guid.Parse(User.FindFirstValue("UserId")!); //who sends the request
+            bool result = await workspaceService.DeleteUserFromWorkspace(userId, workspaceId, memberId);
             if (!result) return BadRequest("Failed to delete member from the workspace.");
             return Ok(result);
         }
@@ -103,11 +96,8 @@ namespace BackendTascly.Controllers
         [HttpPut("{workspaceId:guid}/Members/Role")]
         public async Task<ActionResult> UpdateWorkspaceMemberRole(Guid workspaceId, [FromBody] PutMemberWithNewRoleDto putMemberWithNewRoleDto)
         {
-            // authorize User (only SuperAdmins can Update Member Role in Workspace) 
-            _ = bool.TryParse(User.FindFirstValue("IsSuperAdmin"), out bool isSuperAdmin);
-            if (!isSuperAdmin) return Forbid();
-
-            bool result = await workspaceService.UpdateWorkspaceMemberRole(workspaceId, putMemberWithNewRoleDto);
+            var userId = Guid.Parse(User.FindFirstValue("UserId")!); //who sends the request
+            bool result = await workspaceService.UpdateWorkspaceMemberRole(userId, workspaceId, putMemberWithNewRoleDto);
             return Ok(result);
         }
 

@@ -6,13 +6,13 @@ namespace BackendTascly.Services
 {
     public interface IWorkspaceService
     {
-        Task<bool> CreateWorkspaceAsync(PostWorkspaceDto postWorkspaceDto, Guid organizationId);
+        Task<bool> CreateWorkspaceAsync(Guid userId, PostWorkspaceDto postWorkspaceDto);
         Task<List<Workspace>> GetAllWorkspacesAsync(Guid organizationId);
         Task<Workspace?> GetWorkspaceByIdAsync(Guid workspaceId);
         Task<bool> AddMemberToWorkspaceAsync(PostMemberToWorkspaceDto req, Guid userId, Guid workspaceId);
         Task<List<WorkspaceUserRole>> GetWorkspaceMembers(Guid workspaceId);
-        Task<bool> DeleteUserFromWorkspace(Guid workspaceId, Guid userId);
-        Task<bool> UpdateWorkspaceMemberRole(Guid workspaceId, PutMemberWithNewRoleDto putMemberWithNewRoleDto);
+        Task<bool> DeleteUserFromWorkspace(Guid userId, Guid workspaceId, Guid memberId);
+        Task<bool> UpdateWorkspaceMemberRole(Guid userId, Guid workspaceId, PutMemberWithNewRoleDto putMemberWithNewRoleDto);
         Task<Role?> GetWorkspaceMemberRole(Guid userId, Guid workspaceId);
     }
 }
