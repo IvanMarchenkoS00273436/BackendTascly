@@ -139,12 +139,12 @@ namespace BackendTascly.Data
             var statusesToAdd = new[]
             {
                 new PTaskStatus { Name = "Backlog",        ProjectId = projectId1 },
-                new PTaskStatus { Name = "To Do",        ProjectId = projectId1 },
-                new PTaskStatus { Name = "In Progress",  ProjectId = projectId1 },
+                new PTaskStatus { Name = "ToDo",        ProjectId = projectId1 },
+                new PTaskStatus { Name = "InProgress",  ProjectId = projectId1 },
                 new PTaskStatus { Name = "Done",         ProjectId = projectId1 },
                 new PTaskStatus { Name = "Backlog",        ProjectId = projectId2 },
-                new PTaskStatus { Name = "To Do",        ProjectId = projectId2 },
-                new PTaskStatus { Name = "In Progress",  ProjectId = projectId2 },
+                new PTaskStatus { Name = "ToDo",        ProjectId = projectId2 },
+                new PTaskStatus { Name = "InProgress",  ProjectId = projectId2 },
                 new PTaskStatus { Name = "Done",         ProjectId = projectId2 }
             };
             await TaskStatuses.AddRangeAsync(statusesToAdd, cancellationToken);
