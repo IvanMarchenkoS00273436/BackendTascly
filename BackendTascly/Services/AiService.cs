@@ -39,7 +39,8 @@ namespace BackendTascly.Services
                 "RULES:\n" +
                 "- importanceId: 1=Low 2=Medium 3=High. statusId: always 1.\n" +
                 "- assigneeId: look up the name from the LOOKUP above and use that exact GUID string. If no name mentioned, use JSON null.\n" +
-                "- Default dueDate=" + DateTime.UtcNow.AddDays(7).ToString("yyyy-MM-ddTHH:mm:ss") + " startDate=" + DateTime.UtcNow.ToString("yyyy-MM-ddTHH:mm:ss");
+                "- Default dueDate=" + DateTime.UtcNow.AddDays(7).ToString("yyyy-MM-ddTHH:mm:ss") + " startDate=" + DateTime.UtcNow.ToString("yyyy-MM-ddTHH:mm:ss") + "\n" +
+                "- Do NOT return markdown formatting like ```json ... ```. Just the raw JSON object.";
 
             var payload = new
             {
@@ -49,7 +50,8 @@ namespace BackendTascly.Services
                         new { role = "system", content = systemPrompt },
                         new { role = "user", content = request.Prompt }
                     },
-                temperature = 0.3, // Low temp for more consistent JSON outpt
+                response_format = new { type = "json_object" }, // Force JSON mode
+                temperature = 0.3, // Low temp for more consistent JSON output
                 max_tokens = 2048
             };
 
@@ -73,6 +75,15 @@ namespace BackendTascly.Services
                 .GetProperty("message")
                 .GetProperty("content")
                 .GetString() ?? "{}";
+
+            // Safety cleanup: remove markdown code fences if they still appear
+            if (messageContent.StartsWith("```"))
+            {
+                var lines = messageContent.Split('\n').ToList();
+                if (lines.First().Trim().StartsWith("```")) lines.RemoveAt(0);
+                if (lines.Last().Trim().StartsWith("```")) lines.RemoveAt(lines.Count - 1);
+                messageContent = string.Join("\n", lines);
+            }
 
             // Parse the AI's Json response into our DTO
             var aiResponse = JsonSerializer.Deserialize<AiGenerateResponse>(
@@ -115,5 +126,3 @@ namespace BackendTascly.Services
         }
     }
 }
-       
-           
